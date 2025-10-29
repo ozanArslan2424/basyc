@@ -6,7 +6,7 @@ export default defineConfig({
 	schema: path.join("prisma", "schema"),
 	migrations: {
 		path: path.join("prisma", "migrations"),
-		seed: `ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts`,
+		seed: `bun run prisma/seed.ts`,
 	},
 	views: {
 		path: path.join("prisma", "views"),

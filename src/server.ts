@@ -5,7 +5,7 @@ import { HTTPError } from "@/lib/error.utils";
 import { PersonSchema, ThingSchema } from "prisma/generated/zod/schemas";
 import { openapi } from "@elysiajs/openapi";
 import z from "zod";
-import { ThingCreateDataSchema } from "@/schemas/thing.schemas";
+import { ThingAssignDataSchema, ThingCreateDataSchema } from "@/schemas/thing.schemas";
 import { getErrorResult } from "@/services/error/get-error-result.server";
 
 const prisma = new PrismaClient();
@@ -86,26 +86,65 @@ export const server = new Elysia()
 					const body = c.body;
 					const thing = await c.prisma.thing.create({
 						data: { createdById: person.id, content: body.content },
+						include: { assignedTo: true },
 					});
 					return thing;
 				},
 				{
 					body: ThingCreateDataSchema,
-					response: ThingSchema,
+					response: ThingSchema.extend({
+						assignedTo: PersonSchema.nullable(),
+					}),
 					auth: true,
 				},
 			)
 			.get(
 				"/",
 				async (c) => {
-					const things = await c.prisma.thing.findMany();
+					const things = await c.prisma.thing.findMany({
+						include: { assignedTo: true },
+					});
 					return things;
 				},
 				{
-					response: z.array(ThingSchema),
+					response: ThingSchema.extend({
+						assignedTo: PersonSchema.nullable(),
+					}).array(),
 					auth: true,
 				},
+			)
+			.post(
+				"/assign",
+				async (c) => {
+					const thingId = c.body.thingId;
+					const personId = c.body.personId;
+					const thing = await c.prisma.thing.update({
+						where: { id: thingId },
+						data: { assignedToId: personId },
+						include: { assignedTo: true },
+					});
+					return thing;
+				},
+				{
+					response: ThingSchema.extend({
+						assignedTo: PersonSchema.nullable(),
+					}),
+					body: ThingAssignDataSchema,
+				},
 			),
+	)
+	.group("/person", (person) =>
+		person.get(
+			"/",
+			async (c) => {
+				const persons = await c.prisma.person.findMany();
+				return persons;
+			},
+			{
+				response: PersonSchema.array(),
+				auth: true,
+			},
+		),
 	)
 	.onError((c) => {
 		console.log(c.request.url, c.request.method, c.error);

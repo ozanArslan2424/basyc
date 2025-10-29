@@ -13,17 +13,20 @@ import { NuqsAdapter } from "nuqs/adapters/react";
 import { queryConfig } from "./services/query/query.config";
 import { AuthService } from "@/services/auth/auth.service.ts";
 import { ThingService } from "@/services/thing/thing.service.ts";
+import { PersonService } from "@/services/person/person.service.ts";
 
 export const atomStore = createStore();
 const queryClient = new QueryClient(queryConfig);
 const queryService = new QueryService(queryClient);
 const authService = new AuthService(queryService);
 const thingService = new ThingService(queryService);
+const personService = new PersonService(queryService);
 
 const context = {
 	queryService,
 	authService,
 	thingService,
+	personService,
 };
 
 const AppContext = createContext<typeof context>(context);
