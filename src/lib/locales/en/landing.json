@@ -1,0 +1,43 @@
+{
+	"hero": {
+		"title": "Welcome to",
+		"highlight": "ikky",
+		"description": "From applicant tracking to employee engagement, ikky is your all-in-one HR solution.",
+		"primaryButton": "Get Started",
+		"secondaryButton": "Request a Demo"
+	},
+	"features": {
+		"title": "Tools that make HR easier",
+		"items": {
+			"centralCandidatePool": {
+				"title": "Central Candidate Pool",
+				"description": "Collect all applications in one place. CVs, interview notes, and communication history are neatly organized."
+			},
+			"smartWorkflow": {
+				"title": "Smart Workflow",
+				"description": "Automate candidate progression steps. Focus on people instead of repetitive tasks."
+			},
+			"detailedAnalytics": {
+				"title": "Detailed Analytics",
+				"description": "Track your hiring metrics. See which sources perform better and optimize your processes."
+			},
+			"secureAndCompliant": {
+				"title": "Secure and Compliant",
+				"description": "GDPR and KVKK-compliant data management. Candidate information is safe and stored legally."
+			},
+			"fastIntegration": {
+				"title": "Fast Integration",
+				"description": "Easily integrates with your existing tools. Works seamlessly with email, calendars, and other HR systems."
+			},
+			"teamCollaboration": {
+				"title": "Team Collaboration",
+				"description": "Collaborate effortlessly with your hiring team. Comments, evaluations, and approvals—all in one platform."
+			}
+		}
+	},
+	"cta": {
+		"title": "Ready to get started?",
+		"description": "Try it free for 14 days. No credit card required, cancel anytime.",
+		"button": "Try Now"
+	}
+}

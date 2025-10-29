@@ -1,0 +1,20 @@
+model Person {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name  String
+    email String
+    image String?
+    role  PersonRole @default(user)
+
+    assignedThings     Thing[]      @relation("thing_assigned_to")
+    createdThings      Thing[]      @relation("thing_created_by")
+    createdComments    Comment[]    @relation("comment_created_by")
+    createdAttachments Attachment[] @relation("attachment_created_by")
+
+    userId String @unique
+    user   User   @relation("user_person", fields: [userId], references: [id])
+
+    @@map("profile")
+}

@@ -1,0 +1,75 @@
+{
+	"title": "Job Listings",
+	"createButton": "Create Job",
+	"updateButton": "Update Job",
+	"deleteButton": "Delete Job",
+	"filters": {
+		"search": "Search jobs...",
+		"department": "Department",
+		"location": "Location",
+		"employmentType": "Employment Type",
+		"me": "Jobs I applied for"
+	},
+	"employmentTypes": {
+		"fullTime": "Full Time",
+		"partTime": "Part Time",
+		"contract": "Contract",
+		"intern": "Internship"
+	},
+	"status": {
+		"active": "Active",
+		"closed": "Closed",
+		"draft": "Draft"
+	},
+	"noJobs": "No job listings found",
+	"appliedLabel": "Applied",
+	"form": {
+		"title": "Create a job listing",
+		"fields": {
+			"title": {
+				"label": "Job Title",
+				"error": "Title is required"
+			},
+			"description": {
+				"label": "Job Description",
+				"error": "Description is required"
+			},
+			"department": {
+				"label": "Department",
+				"error": "Department is required"
+			},
+			"location": {
+				"label": "Location",
+				"error": "Location is required"
+			},
+			"employmentType": {
+				"label": "Employment Type",
+				"error": "Employment type is required"
+			},
+			"status": {
+				"label": "Listing Status"
+			},
+			"openings": {
+				"label": "Number of Openings",
+				"error": "Enter a valid number of openings"
+			},
+			"applicationDeadline": {
+				"label": "Application Deadline",
+				"error": "Select application deadline"
+			}
+		},
+		"submitButton": "Submit",
+		"cancelButton": "Cancel"
+	},
+	"table": {
+		"headers": {
+			"title": "Title",
+			"description": "Description",
+			"location": "Location",
+			"department": "Department",
+			"employmentType": "Employment Type",
+			"openings": "Openings",
+			"status": "Status"
+		}
+	}
+}

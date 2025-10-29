@@ -1,0 +1,41 @@
+{
+	"quickActions": "Quick Actions",
+	"search": {
+		"placeholder": "Search...",
+		"emptyMessage": "No results found"
+	},
+
+	"/": "ikky",
+
+	"/login": "Login",
+	"/register": "Register",
+	"/forgot-password": "Forgot Password",
+
+	"/dashboard": "Dashboard",
+
+	"/applicants": "Applicants",
+	"/applicants/pool": "Applicant Pool",
+	"/applicants/archive": "Archived Applicants",
+	"/applicants/database": "Applicant Database",
+
+	"/jobs": "Jobs",
+	"/jobs/active": "Active Jobs",
+	"/jobs/archive": "Archived Jobs",
+
+	"/employees": "Employees",
+	"/employees/recruitment": "Recruitment",
+	"/employees/active": "Active Employees",
+	"/employees/archive": "Archived Employees",
+
+	"/analytics": "Analytics",
+
+	"/reports": "Reports",
+
+	"/settings": "Settings",
+
+	"/help": "Help",
+
+	"/inbox": "Inbox",
+
+	"/documents": "Documents"
+}
