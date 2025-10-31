@@ -42,6 +42,9 @@ export function handleMutationSettle(res: unknown, error: Error | null) {
 	if (isObjectWith<{ message: string }>(res, "message") && typeof res.message === "string") {
 		toast.success(res.message);
 	} else if (error) {
+		if (process.env.NODE_ENV !== "production") {
+			console.log(error);
+		}
 		toast.error(error.message);
 	}
 }
@@ -51,9 +54,6 @@ export function getErrorMessage(err: unknown) {
 
 	switch (true) {
 		case err instanceof Error:
-			message = err.message;
-			break;
-		case err instanceof CustomServerError:
 			message = err.message;
 			break;
 		case err instanceof HTTPError:

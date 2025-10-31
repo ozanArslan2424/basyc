@@ -2,7 +2,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { AppHeader } from "@/components/app-header";
 import { SidebarProvider, SidebarInset } from "@/components/sidebar/sidebar";
 import { Outlet, useNavigate } from "react-router";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { paths } from "@/nav/paths";
 import { useAppContext } from "@/client";
 import { PendingCard } from "@/components/pending-card";
@@ -12,10 +12,10 @@ export function ProtectedLayout() {
 	const ctx = useAppContext();
 	const [isPending, setIsPending] = useState(true);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		async function init() {
 			try {
-				await ctx.queryService.queryClient.ensureQueryData(ctx.authService.queryMe());
+				await ctx.queryService.queryClient.fetchQuery(ctx.authService.queryMe());
 			} catch {
 				await navigate(paths.login);
 			} finally {

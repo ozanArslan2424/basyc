@@ -4,6 +4,7 @@ import { QK_AUTH } from "@/services/auth/auth.keys";
 import { request } from "@/lib/request";
 import type { Person } from "prisma/generated";
 import type { LoginData, RegisterData } from "@/schemas/auth.schemas";
+import type { OnMutationSuccess } from "@/services/query/query.type";
 
 export class AuthService {
 	constructor(readonly queryService: QueryService) {
@@ -20,29 +21,32 @@ export class AuthService {
 			},
 		});
 
-	login = () =>
+	login = (onSuccess?: OnMutationSuccess<LoginData, Person>) =>
 		this.queryService.createMutationOptions<LoginData, Person>({
 			mutationFn: async (body) => {
 				const res = await request.auth.login.post(body);
 				if (res.error) throw res.error;
 				return res.data;
 			},
+			onSuccess,
 		});
 
-	register = () =>
-		this.queryService.createMutationOptions<RegisterData>({
+	register = (onSuccess?: OnMutationSuccess<RegisterData, Person>) =>
+		this.queryService.createMutationOptions<RegisterData, Person>({
 			mutationFn: async (body) => {
 				const res = await request.auth.register.post(body);
 				if (res.error) throw res.error;
 				return res.data;
 			},
+			onSuccess,
 		});
 
-	logout = () =>
+	logout = (onSuccess?: OnMutationSuccess) =>
 		this.queryService.createMutationOptions({
 			mutationFn: async () => {
 				const res = await request.auth.logout.post();
 				if (res.error) throw res.error;
 			},
+			onSuccess,
 		});
 }

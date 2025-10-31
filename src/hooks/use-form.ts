@@ -1,6 +1,9 @@
-import type { TFormErrors } from "@/lib/helper.type";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { z } from "zod/v4";
+
+export type TFormErrors<TFields> = z.core.$ZodFlattenedError<TFields, string>["fieldErrors"] & {
+	_root: string[];
+};
 
 type UseFormArgs<T> = {
 	schema: z.ZodType<T>;
@@ -10,6 +13,7 @@ type UseFormArgs<T> = {
 };
 
 export type UseFormReturn<T> = {
+	isPending: boolean;
 	methods: {
 		onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 		onReset: () => void;
@@ -18,43 +22,61 @@ export type UseFormReturn<T> = {
 	};
 	defaultValues: Partial<T> | undefined;
 	errors: TFormErrors<T>;
-	setRootError: (rootError: string) => void;
+	setRootError: (rootError: string | Array<string>) => void;
 	reset: () => void;
 };
 
+const emptyErrors: TFormErrors<unknown> = { _root: [] };
+
 export function useForm<T>(args: UseFormArgs<T>): UseFormReturn<T> {
-	const [errors, setErrors] = useState<TFormErrors<T>>();
+	const [isPending, startPending] = useTransition();
+	const [errors, setErrors] = useState<TFormErrors<T>>(emptyErrors);
 	const ref = useRef<HTMLFormElement>(null);
 
 	const onSubmit = useCallback(
-		(e: React.FormEvent<HTMLFormElement>) => {
+		async (e: React.FormEvent<HTMLFormElement>) => {
 			e.preventDefault();
-			const formData = new FormData(e.currentTarget);
-			const formDataEntries = formData.entries();
-			const formDataObject = Object.fromEntries(formDataEntries);
-			const parseResult = args.schema.safeParse(formDataObject);
-			if (!parseResult.success) {
-				setErrors({
-					...z.flattenError(parseResult.error).fieldErrors,
-					_root: [],
-				});
-				return;
-			}
-			setErrors(undefined);
-			args.onSubmit(parseResult.data, formData);
+			startPending(async () => {
+				const formData = new FormData(e.currentTarget);
+				const formDataObject: Record<string, FormDataEntryValue | FormDataEntryValue[]> = {};
+
+				for (const name of formData.keys()) {
+					const allValues = formData.getAll(name);
+					formDataObject[name] = allValues.length > 1 ? allValues : allValues[0] || "";
+				}
+
+				if (process.env.NODE_ENV === "development") {
+					console.log(formDataObject);
+				}
+
+				const parseResult = args.schema.safeParse(formDataObject);
+				if (!parseResult.success) {
+					if (process.env.NODE_ENV === "development") {
+						console.log(parseResult.error.issues);
+					}
+
+					setErrors({
+						...z.flattenError(parseResult.error).fieldErrors,
+						_root: [],
+					});
+					return;
+				}
+				setErrors(emptyErrors);
+				args.onSubmit(parseResult.data, formData);
+			});
 		},
 		[args],
 	);
 
 	const onReset = useCallback(() => {
 		ref.current?.reset();
-		setErrors(undefined);
+		setErrors(emptyErrors);
 		args.onReset?.();
 	}, [args]);
 
 	const reset = useCallback(() => {
 		ref.current?.reset();
-		setErrors(undefined);
+		setErrors(emptyErrors);
 	}, []);
 
 	const setRootError = useCallback((rootError: string | Array<string>) => {
@@ -65,6 +87,7 @@ export function useForm<T>(args: UseFormArgs<T>): UseFormReturn<T> {
 	}, []);
 
 	return {
+		isPending,
 		methods: { onSubmit, onReset, ref, noValidate: true },
 		errors,
 		defaultValues: args.defaultValues,

@@ -15,7 +15,12 @@ export function RegisterPage() {
 	const { t } = useTranslation("auth");
 	const ctx = useAppContext();
 	const navigate = useNavigate();
-	const registerMutation = useMutation(ctx.authService.register());
+	const registerMutation = useMutation(
+		ctx.authService.register(async () => {
+			await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
+			navigate(paths.dashboard);
+		}),
+	);
 
 	const form = useForm({
 		schema: RegisterDataSchema,
@@ -24,13 +29,7 @@ export function RegisterPage() {
 			email: "testaccount@test.com",
 			password: "123456789",
 		},
-		onSubmit: (body) =>
-			registerMutation.mutate(body, {
-				onSuccess: async () => {
-					await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
-					navigate(paths.dashboard);
-				},
-			}),
+		onSubmit: (body) => registerMutation.mutate(body),
 	});
 
 	const welcomeBackMessage = t("register.welcome");

@@ -1,2 +1,2 @@
 export type UpdaterFn<T> = T | ((prev: T) => T);
-export type OnMutationSuccess<R, V = void> = (res: R, vars: V) => void;
+export type OnMutationSuccess<V = void, R = void> = (res: R, vars: V) => void;

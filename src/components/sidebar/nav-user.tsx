@@ -22,15 +22,15 @@ export function NavUser() {
 	const ctx = useAppContext();
 	const { isMobile } = useSidebar();
 	const meQuery = useQuery(ctx.authService.queryMe());
-	const logoutMutation = useMutation(ctx.authService.logout());
+	const logoutMutation = useMutation(
+		ctx.authService.logout(async () => {
+			await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
+			navigate(paths.landing);
+		}),
+	);
 
 	function handleLogout() {
-		logoutMutation.mutate(undefined, {
-			onSuccess: async () => {
-				await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
-				navigate(paths.landing);
-			},
-		});
+		logoutMutation.mutate();
 	}
 
 	if (meQuery.isPending) {

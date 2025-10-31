@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function isObjectWith<T extends Record<string, unknown>>(item: unknown, key: keyof T | string): item is T {
 	return !!item && typeof item === "object" && key in item;
 }
+
+export function repeat(length: number = 4) {
+	return Array.from({ length }, (_, index) => index);
+}

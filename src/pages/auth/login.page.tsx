@@ -15,7 +15,12 @@ export function LoginPage() {
 	const { t } = useTranslation("auth");
 	const ctx = useAppContext();
 	const navigate = useNavigate();
-	const loginMutation = useMutation(ctx.authService.login());
+	const loginMutation = useMutation(
+		ctx.authService.login(async () => {
+			await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
+			navigate(paths.dashboard);
+		}),
+	);
 
 	const form = useForm({
 		schema: LoginDataSchema,
@@ -23,13 +28,7 @@ export function LoginPage() {
 			email: "testaccount@test.com",
 			password: "123456789",
 		},
-		onSubmit: (body) =>
-			loginMutation.mutate(body, {
-				onSuccess: async () => {
-					await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
-					navigate(paths.dashboard);
-				},
-			}),
+		onSubmit: (body) => loginMutation.mutate(body),
 	});
 
 	const welcomeBackMessage = t("login.welcome");
@@ -80,7 +79,7 @@ export function LoginPage() {
 					/>
 					<ErrorLabel htmlFor="password">{form.errors?.password}</ErrorLabel>
 				</div>
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" isPending={form.isPending}>
 					{submitLabel}
 				</Button>
 
