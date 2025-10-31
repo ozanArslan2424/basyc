@@ -129,10 +129,7 @@ export function SelectContent({
 	);
 }
 
-export function SelectLabel({
-	className,
-	...props
-}: React.ComponentProps<typeof SelectPrimitive.Label>) {
+export function SelectLabel({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Label>) {
 	return (
 		<SelectPrimitive.Label
 			data-slot="select-label"
@@ -142,11 +139,7 @@ export function SelectLabel({
 	);
 }
 
-export function SelectItem({
-	className,
-	children,
-	...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+export function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
 	return (
 		<SelectPrimitive.Item
 			data-slot="select-item"
@@ -166,10 +159,7 @@ export function SelectItem({
 	);
 }
 
-export function SelectSeparator({
-	className,
-	...props
-}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+export function SelectSeparator({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Separator>) {
 	return (
 		<SelectPrimitive.Separator
 			data-slot="select-separator"

@@ -30,8 +30,8 @@ export function AuthLayout() {
 						</CardContent>
 					</Card>
 					<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-						{confirmText.first} <a href="#">{confirmText.tos}</a> {confirmText.and}{" "}
-						<a href="#">{confirmText.pp}</a> {confirmText.last}
+						{confirmText.first} <a href="#">{confirmText.tos}</a> {confirmText.and} <a href="#">{confirmText.pp}</a>{" "}
+						{confirmText.last}
 					</div>
 				</div>
 			</div>

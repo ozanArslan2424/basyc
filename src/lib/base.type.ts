@@ -15,9 +15,7 @@ type BaseResponse = {
 	statusCode: number;
 };
 
-export type TBaseResponse<T = undefined> = T extends undefined
-	? BaseResponse
-	: Prettify<BaseResponse & { data: T }>;
+export type TBaseResponse<T = undefined> = T extends undefined ? BaseResponse : Prettify<BaseResponse & { data: T }>;
 
 export type TBasePaginationData<T extends TBaseEntity> = {
 	items: T[];

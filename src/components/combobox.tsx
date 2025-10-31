@@ -1,12 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import {
-	Command,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "@/components/ui/command";
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -68,9 +62,7 @@ export function Combobox({
 		setOpen(false);
 	}
 
-	const filteredOptions = internalOptions.filter((opt) =>
-		opt.label.toLowerCase().includes(inputValue.toLowerCase()),
-	);
+	const filteredOptions = internalOptions.filter((opt) => opt.label.toLowerCase().includes(inputValue.toLowerCase()));
 
 	if (isMobile) {
 		return (
@@ -158,17 +150,11 @@ function RenderCommand({
 							{opt.label}
 						</CommandItem>
 					))}
-					{inputValue &&
-						!filteredOptions.some(
-							(opt) => opt.label.toLowerCase() === inputValue.toLowerCase(),
-						) && (
-							<CommandItem
-								value={`__create__${inputValue}`}
-								onSelect={() => handleCreateOption(inputValue)}
-							>
-								{t("create")} "{inputValue}"
-							</CommandItem>
-						)}
+					{inputValue && !filteredOptions.some((opt) => opt.label.toLowerCase() === inputValue.toLowerCase()) && (
+						<CommandItem value={`__create__${inputValue}`} onSelect={() => handleCreateOption(inputValue)}>
+							{t("create")} "{inputValue}"
+						</CommandItem>
+					)}
 				</CommandGroup>
 			</CommandList>
 		</Command>

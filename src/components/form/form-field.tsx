@@ -8,10 +8,7 @@ type FormFieldProps<F> = {
 	name: keyof F extends string ? keyof F : never;
 	label?: string;
 	form: UseFormReturn<F>;
-	children: ReactElement<
-		{ id: string; name: string; defaultValue?: string | undefined },
-		React.FunctionComponent
-	>;
+	children: ReactElement<{ id: string; name: string; defaultValue?: string | undefined }, React.FunctionComponent>;
 	className?: string;
 	sublabel?: string;
 };
@@ -26,9 +23,7 @@ export function FormField<F>(props: FormFieldProps<F>) {
 	}>(props.children, {
 		id: htmlFor,
 		name: props.name as string,
-		defaultValue:
-			(props.form.defaultValues?.[props.name as keyof typeof props.form.defaultValues] as string) ??
-			"",
+		defaultValue: (props.form.defaultValues?.[props.name as keyof typeof props.form.defaultValues] as string) ?? "",
 	});
 
 	return (
@@ -43,9 +38,7 @@ export function FormField<F>(props: FormFieldProps<F>) {
 				</Label>
 			)}
 
-			<ErrorLabel htmlFor={htmlFor}>
-				{props.form.errors?.[props.name as keyof typeof props.form.errors]}
-			</ErrorLabel>
+			<ErrorLabel htmlFor={htmlFor}>{props.form.errors?.[props.name as keyof typeof props.form.errors]}</ErrorLabel>
 		</div>
 	);
 }

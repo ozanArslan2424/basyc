@@ -17,9 +17,7 @@ export function LandingPage() {
 						{t("hero.title")}
 						<span className="text-primary block">{t("hero.highlight")}</span>
 					</h1>
-					<p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg md:text-xl">
-						{t("hero.description")}
-					</p>
+					<p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg md:text-xl">{t("hero.description")}</p>
 					<div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
 						<Link to={paths.dashboard}>
 							<Button size="lg" className="px-12 py-6 text-lg">
@@ -38,9 +36,7 @@ export function LandingPage() {
 			<section className="py-20">
 				<div className="container mx-auto px-4">
 					<div className="mb-16 text-center">
-						<h2 className="text-foreground mb-4 text-3xl font-bold md:text-4xl">
-							{t("features.title")}
-						</h2>
+						<h2 className="text-foreground mb-4 text-3xl font-bold md:text-4xl">{t("features.title")}</h2>
 					</div>
 
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

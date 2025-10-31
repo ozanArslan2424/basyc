@@ -3,11 +3,7 @@ import * as LabelPrimitive from "@radix-ui/react-label";
 
 import { cn } from "@/lib/utils";
 
-function Label({
-	className,
-	children,
-	...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function Label({ className, children, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
 	if (!children) return null;
 
 	return (
@@ -24,11 +20,7 @@ function Label({
 	);
 }
 
-function ErrorLabel({
-	className,
-	children,
-	...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function ErrorLabel({ className, children, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
 	if (!children) return null;
 
 	return (

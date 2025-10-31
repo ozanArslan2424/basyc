@@ -27,10 +27,7 @@ export function ViewSwitch(props: ViewSwitchProps) {
 				onCheckedChange={handleCheckedChange}
 				id="view"
 				data-slot="switch"
-				className={cn(
-					"peer",
-					buttonVariants({ variant: "outline", className: "block min-w-20 p-0" }),
-				)}
+				className={cn("peer", buttonVariants({ variant: "outline", className: "block min-w-20 p-0" }))}
 			>
 				<SwitchPrimitive.Thumb
 					data-slot="switch-thumb"

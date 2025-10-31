@@ -13,11 +13,7 @@ type DraggableTableProps<T extends TWithId> = {
 	items: T[];
 };
 
-export function DraggableTable<T extends TWithId>({
-	table,
-	onDragEnd,
-	items,
-}: DraggableTableProps<T>) {
+export function DraggableTable<T extends TWithId>({ table, onDragEnd, items }: DraggableTableProps<T>) {
 	const verticalDnd = useVerticalDragAndDrop(items);
 
 	function handleDragEnd(event: DragEndEvent) {
@@ -37,9 +33,7 @@ export function DraggableTable<T extends TWithId>({
 						<TableRow key={headerGroup.id}>
 							{headerGroup.headers.map((header) => (
 								<TableHead key={header.id} colSpan={header.colSpan}>
-									{header.isPlaceholder
-										? null
-										: flexRender(header.column.columnDef.header, header.getContext())}
+									{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 								</TableHead>
 							))}
 						</TableRow>

@@ -1,9 +1,4 @@
-import {
-	IconChevronsLeft,
-	IconChevronLeft,
-	IconChevronRight,
-	IconChevronsRight,
-} from "@tabler/icons-react";
+import { IconChevronsLeft, IconChevronLeft, IconChevronRight, IconChevronsRight } from "@tabler/icons-react";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
@@ -36,10 +31,7 @@ export function Pagination(props: PaginationProps) {
 					<Label htmlFor="rows-per-page" className="text-sm font-medium">
 						{t("pagination.limit")}
 					</Label>
-					<Select
-						value={props.currentLimit.toString()}
-						onValueChange={(value) => props.onLimitChange(Number(value))}
-					>
+					<Select value={props.currentLimit.toString()} onValueChange={(value) => props.onLimitChange(Number(value))}>
 						<SelectTrigger size="sm" className="w-20" id="rows-per-page">
 							<SelectValue placeholder={props.currentLimit} />
 						</SelectTrigger>

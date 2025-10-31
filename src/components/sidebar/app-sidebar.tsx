@@ -65,11 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									<IconCirclePlusFilled />
 									<span>{t("quickActions")}</span>
 								</SidebarMenuButton>
-								<Button
-									size="icon"
-									className="size-8 group-data-[collapsible=icon]:opacity-0"
-									variant="outline"
-								>
+								<Button size="icon" className="size-8 group-data-[collapsible=icon]:opacity-0" variant="outline">
 									<IconMail />
 									<span className="sr-only">{t("inbox")}</span>
 								</Button>
@@ -95,11 +91,7 @@ function RecursiveSidebarMenu({ items, level = 0 }: { items: SidebarNavItem[]; l
 			{items.map((item) => (
 				<React.Fragment key={`${item.value}-${level}`}>
 					<SidebarMenuItem>
-						<SidebarMenuButton
-							tooltip={item.label}
-							asChild
-							isActive={location.pathname.includes(item.value)}
-						>
+						<SidebarMenuButton tooltip={item.label} asChild isActive={location.pathname.includes(item.value)}>
 							{item.onClick ? (
 								<div>
 									{item.icon && <item.icon />}

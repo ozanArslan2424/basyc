@@ -24,9 +24,7 @@ export class ObjectStore<T extends UnknownObj> {
 	set(...args: [Partial<T> | ((prevState: T | null) => T) | null] | [keyof T, T[keyof T]]): void {
 		if (args.length === 2) {
 			const [key, value] = args;
-			this.currentState = this.currentState
-				? { ...this.currentState, [key]: value }
-				: ({ [key]: value } as T);
+			this.currentState = this.currentState ? { ...this.currentState, [key]: value } : ({ [key]: value } as T);
 		} else {
 			const state = args[0];
 			if (typeof state === "function") {

@@ -1,7 +1,9 @@
-import type { Prisma } from '../..';
-import * as z from 'zod';
-import { SessionWhereUniqueInputObjectSchema as SessionWhereUniqueInputObjectSchema } from './objects/SessionWhereUniqueInput.schema';
+import type { Prisma } from "../..";
+import * as z from "zod";
+import { SessionWhereUniqueInputObjectSchema as SessionWhereUniqueInputObjectSchema } from "./objects/SessionWhereUniqueInput.schema";
 
-export const SessionFindUniqueSchema: z.ZodType<Prisma.SessionFindUniqueArgs> = z.object({   where: SessionWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.SessionFindUniqueArgs>;
+export const SessionFindUniqueSchema: z.ZodType<Prisma.SessionFindUniqueArgs> = z
+	.object({ where: SessionWhereUniqueInputObjectSchema })
+	.strict() as unknown as z.ZodType<Prisma.SessionFindUniqueArgs>;
 
-export const SessionFindUniqueZodSchema = z.object({   where: SessionWhereUniqueInputObjectSchema }).strict();
+export const SessionFindUniqueZodSchema = z.object({ where: SessionWhereUniqueInputObjectSchema }).strict();

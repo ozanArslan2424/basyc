@@ -3,5 +3,5 @@
  * Auto-generated - do not edit manually
  */
 
-export * from './pure';
-export * from './input';
+export * from "./pure";
+export * from "./input";

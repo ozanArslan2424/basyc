@@ -42,9 +42,7 @@ export function AppSearch() {
 		if (typeof value === "object" && value !== null) {
 			return (
 				<React.Fragment key={key}>
-					{Object.entries(value).map(([childKey, childValue]) =>
-						renderItem(`${key}.${childKey}`, childValue),
-					)}
+					{Object.entries(value).map(([childKey, childValue]) => renderItem(`${key}.${childKey}`, childValue))}
 				</React.Fragment>
 			);
 		}
@@ -57,9 +55,7 @@ export function AppSearch() {
 			<CommandInput placeholder={placeholder} />
 			<CommandList>
 				<CommandEmpty>{emptyMessage}</CommandEmpty>
-				<CommandGroup>
-					{Object.entries(paths).map(([key, value]) => renderItem(key, value))}
-				</CommandGroup>
+				<CommandGroup>{Object.entries(paths).map(([key, value]) => renderItem(key, value))}</CommandGroup>
 			</CommandList>
 		</CommandDialog>
 	);

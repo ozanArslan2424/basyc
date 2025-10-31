@@ -17,8 +17,6 @@ export class QueryService {
 	}
 
 	invalidateAll(queryKeys: (string | number)[][]) {
-		return Promise.all(
-			queryKeys.map((queryKey) => this.queryClient.invalidateQueries({ queryKey })),
-		);
+		return Promise.all(queryKeys.map((queryKey) => this.queryClient.invalidateQueries({ queryKey })));
 	}
 }

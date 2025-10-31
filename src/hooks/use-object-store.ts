@@ -23,10 +23,7 @@ export function useObjectStore<T extends TUnknownObject, K extends keyof T>(
 	store: ObjectStore<T>,
 	key: K,
 ): KeyOverload<T, K>;
-export function useObjectStore<T extends TUnknownObject, K extends keyof T>(
-	store: ObjectStore<T>,
-	key?: K,
-) {
+export function useObjectStore<T extends TUnknownObject, K extends keyof T>(store: ObjectStore<T>, key?: K) {
 	const [value, setValue] = useState<NonNullable<T[K]> | T | null>(() => {
 		const v = store.get(key as K);
 		return v ?? null;
@@ -36,9 +33,7 @@ export function useObjectStore<T extends TUnknownObject, K extends keyof T>(
 		const unsub = store.subscribe((newState) => {
 			if (key) {
 				const newValue = newState?.[key];
-				setValue(
-					newValue !== undefined && newValue !== null ? (newValue as NonNullable<T[K]>) : null,
-				);
+				setValue(newValue !== undefined && newValue !== null ? (newValue as NonNullable<T[K]>) : null);
 			} else {
 				setValue(newState ?? null);
 			}
@@ -48,9 +43,7 @@ export function useObjectStore<T extends TUnknownObject, K extends keyof T>(
 
 	function set(state: Partial<T> | ((prev: T | null) => T) | null): void;
 	function set<K2 extends keyof T>(key: K2, value: T[K2]): void;
-	function set(
-		...args: [Partial<T> | ((prev: T | null) => T) | null] | [keyof T, T[keyof T]]
-	): void {
+	function set(...args: [Partial<T> | ((prev: T | null) => T) | null] | [keyof T, T[keyof T]]): void {
 		if (args.length === 2) {
 			store.set(args[0] as keyof T, args[1]);
 		} else {

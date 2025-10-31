@@ -9,6 +9,7 @@ import { SocialLoginButtons } from "./social-login-buttons";
 import { useTranslation } from "react-i18next";
 import { FormField } from "@/components/form/form-field";
 import { RegisterDataSchema } from "@/schemas/auth.schemas";
+import { QK_AUTH } from "@/services/auth/auth.keys";
 
 export function RegisterPage() {
 	const { t } = useTranslation("auth");
@@ -25,7 +26,8 @@ export function RegisterPage() {
 		},
 		onSubmit: (body) =>
 			registerMutation.mutate(body, {
-				onSuccess: () => {
+				onSuccess: async () => {
+					await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
 					navigate(paths.dashboard);
 				},
 			}),

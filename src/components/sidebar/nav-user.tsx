@@ -7,26 +7,30 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import {
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	useSidebar,
-} from "@/components/sidebar/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/sidebar/sidebar";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UserAvatar } from "../user-avatar";
 import { Skeleton } from "../ui/skeleton";
 import { useAppContext } from "@/client";
 import { ErrorCard } from "@/pages/error/error-card";
+import { QK_AUTH } from "@/services/auth/auth.keys";
+import { paths } from "@/nav/paths";
+import { useNavigate } from "react-router";
 
 export function NavUser() {
+	const navigate = useNavigate();
 	const ctx = useAppContext();
 	const { isMobile } = useSidebar();
 	const meQuery = useQuery(ctx.authService.queryMe());
 	const logoutMutation = useMutation(ctx.authService.logout());
 
 	function handleLogout() {
-		logoutMutation.mutate();
+		logoutMutation.mutate(undefined, {
+			onSuccess: async () => {
+				await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
+				navigate(paths.landing);
+			},
+		});
 	}
 
 	if (meQuery.isPending) {
@@ -46,8 +50,6 @@ export function NavUser() {
 	if (meQuery.error) {
 		return <ErrorCard error={meQuery.error} />;
 	}
-
-	console.log(meQuery.data);
 
 	const user = meQuery.data;
 

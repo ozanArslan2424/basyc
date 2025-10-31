@@ -27,9 +27,6 @@ export class AuthService {
 				if (res.error) throw res.error;
 				return res.data;
 			},
-			onSuccess: (me) => {
-				this.queryService.queryClient.setQueryData([QK_AUTH.ME], me);
-			},
 		});
 
 	register = () =>
@@ -39,9 +36,6 @@ export class AuthService {
 				if (res.error) throw res.error;
 				return res.data;
 			},
-			onSuccess: (me) => {
-				this.queryService.queryClient.setQueryData([QK_AUTH.ME], me);
-			},
 		});
 
 	logout = () =>
@@ -49,9 +43,6 @@ export class AuthService {
 			mutationFn: async () => {
 				const res = await request.auth.logout.post();
 				if (res.error) throw res.error;
-			},
-			onSuccess: () => {
-				this.queryService.invalidateAll([[QK_AUTH.ME]]);
 			},
 		});
 }

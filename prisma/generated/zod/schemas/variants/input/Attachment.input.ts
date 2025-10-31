@@ -1,5 +1,5 @@
-import * as z from 'zod';
-import { AttachmentTypeSchema } from '../../enums/AttachmentType.schema';
+import * as z from "zod";
+import { AttachmentTypeSchema } from "../../enums/AttachmentType.schema";
 // prettier-ignore
 export const AttachmentInputSchema = z.object({
     type: AttachmentTypeSchema,

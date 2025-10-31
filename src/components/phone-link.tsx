@@ -25,9 +25,7 @@ export function PhoneLink({ phone, className, showFlag = false }: PhoneLinkProps
 	};
 
 	const getFlagEmoji = (phone: string) => {
-		const country = countries.find((country) =>
-			country.dialCode ? phone.startsWith(country.dialCode) : undefined,
-		);
+		const country = countries.find((country) => (country.dialCode ? phone.startsWith(country.dialCode) : undefined));
 		return country?.emoji || "🌐";
 	};
 

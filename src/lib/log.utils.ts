@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 export function logger(
-	variant:
-		| "default"
-		| "start"
-		| "end"
-		| "debug"
-		| "info"
-		| "warn"
-		| "error"
-		| "success"
-		| "box"
-		| "count",
+	variant: "default" | "start" | "end" | "debug" | "info" | "warn" | "error" | "success" | "box" | "count",
 	...data: any[]
 ) {
 	// if (import.meta.env.NODE_ENV !== "development") return;

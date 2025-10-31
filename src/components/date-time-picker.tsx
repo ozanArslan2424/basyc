@@ -62,12 +62,7 @@ export function DateTimePicker({ id, name, value, defaultValue, onChange }: Date
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className="w-auto overflow-hidden p-0" align="start">
-						<Calendar
-							mode="single"
-							selected={dateValue}
-							captionLayout="dropdown"
-							onSelect={handleDateSelect}
-						/>
+						<Calendar mode="single" selected={dateValue} captionLayout="dropdown" onSelect={handleDateSelect} />
 					</PopoverContent>
 				</Popover>
 			</div>

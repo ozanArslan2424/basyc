@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { SocialLoginButtons } from "./social-login-buttons";
 import { useTranslation } from "react-i18next";
 import { LoginDataSchema } from "@/schemas/auth.schemas";
+import { QK_AUTH } from "@/services/auth/auth.keys";
 
 export function LoginPage() {
 	const { t } = useTranslation("auth");
@@ -24,7 +25,8 @@ export function LoginPage() {
 		},
 		onSubmit: (body) =>
 			loginMutation.mutate(body, {
-				onSuccess: () => {
+				onSuccess: async () => {
+					await ctx.queryService.invalidateAll([[QK_AUTH.ME]]);
 					navigate(paths.dashboard);
 				},
 			}),
