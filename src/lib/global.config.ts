@@ -1,3 +1,3 @@
 export const GLOBAL = {
-	APP_NAME: "ikky",
+	APP_NAME: "basyc",
 };

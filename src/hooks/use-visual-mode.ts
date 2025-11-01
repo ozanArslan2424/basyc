@@ -53,17 +53,26 @@ export function useVisualMode(els: { id: string; onAction: () => void }[] = []) 
 			}
 
 			if (checkKeys(e, ["Space", "v"])) {
-				keyPressBuffer.current = ["Space", "v"];
-				setLastKeyPressTime(currentTime);
-				return;
-			}
-
-			if (checkKeys(e, ["Space", "v", "v"])) {
 				setIsVisualMode((prev) => !prev);
 				keyPressBuffer.current = [];
 				e.preventDefault();
 				return;
 			}
+
+			// Note: Use to be two v clicks
+			//
+			// if (checkKeys(e, ["Space", "v"])) {
+			// 	keyPressBuffer.current = ["Space", "v"];
+			// 	setLastKeyPressTime(currentTime);
+			// 	return;
+			// }
+			//
+			// if (checkKeys(e, ["Space", "v", "v"])) {
+			// 	setIsVisualMode((prev) => !prev);
+			// 	keyPressBuffer.current = [];
+			// 	e.preventDefault();
+			// 	return;
+			// }
 
 			keyPressBuffer.current = [];
 		},
@@ -75,7 +84,7 @@ export function useVisualMode(els: { id: string; onAction: () => void }[] = []) 
 		(e: KeyboardEvent) => {
 			if (!isVisualMode) return;
 
-			if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+			if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
 				e.preventDefault();
 
 				let newIndex = currentFocusIndex;
@@ -84,6 +93,7 @@ export function useVisualMode(els: { id: string; onAction: () => void }[] = []) 
 				switch (e.key) {
 					case "ArrowRight":
 					case "ArrowDown":
+					case "Tab":
 						newIndex = (currentFocusIndex + 1) % totalElements;
 						break;
 					case "ArrowLeft":
