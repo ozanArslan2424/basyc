@@ -1,10 +1,10 @@
 import { useAppContext } from "@/client";
 import { PageContent } from "@/components/page-content";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { useActiveEntity } from "@/hooks/use-active-entity";
 import { useDialog } from "@/hooks/use-dialog";
 import { useDnd } from "@/hooks/use-dnd";
-import { useVisualMode } from "@/hooks/use-visual-mode";
+import { useMode } from "@/hooks/use-mode";
 import { cn, repeat } from "@/lib/utils";
 import { PersonCard } from "@/pages/dashboard/person-card";
 import { ThingCard, ThingCardSkeleton } from "@/pages/dashboard/thing-card";
@@ -23,7 +23,7 @@ import {
 	CommandDialog,
 } from "@/components/ui/command";
 import type { Person } from "prisma/generated";
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
+import { useRef, type ComponentProps } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
@@ -107,7 +107,7 @@ export function DashboardPage() {
 		})),
 	];
 
-	const vm = useVisualMode(els);
+	const vm = useMode(els);
 
 	const thingDnd = useDnd({
 		onDrop: (sourceData, targetData) => {

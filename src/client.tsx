@@ -14,6 +14,7 @@ import { queryConfig } from "./services/query/query.config";
 import { AuthService } from "@/services/auth/auth.service.ts";
 import { ThingService } from "@/services/thing/thing.service.ts";
 import { PersonService } from "@/services/person/person.service.ts";
+import { ModeProvider } from "@/hooks/use-mode.tsx";
 
 export const atomStore = createStore();
 const queryClient = new QueryClient(queryConfig);
@@ -44,8 +45,10 @@ function App() {
 				<QueryClientProvider client={queryClient}>
 					<JotaiProvider store={atomStore}>
 						<AppContext value={context}>
-							<Toaster richColors position="top-right" />
-							<RouterProvider router={router} />
+							<ModeProvider>
+								<Toaster richColors position="top-right" />
+								<RouterProvider router={router} />
+							</ModeProvider>
 						</AppContext>
 					</JotaiProvider>
 				</QueryClientProvider>

@@ -7,6 +7,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { Kbd } from "@/components/ui/kbd";
 import type { ConfirmDialogState } from "@/hooks/use-confirm-dialog";
 
 type ConfirmDialogProps = ConfirmDialogState & {
@@ -35,11 +36,13 @@ export function ConfirmDialog({
 				</DialogHeader>
 
 				<DialogFooter className="grid grid-cols-3 gap-4">
-					<Button variant="ghost" onClick={onCancel} className="col-span-1">
+					<Button variant="ghost" onClick={onCancel} className="relative col-span-1">
 						{cancelText}
+						<Kbd className="absolute top-1/2 right-2 -translate-y-1/2">n</Kbd>
 					</Button>
-					<Button onClick={onConfirm} className="col-span-2">
-						{confirmText}
+					<Button onClick={onConfirm} className="relative col-span-2">
+						<span>{confirmText}</span>
+						<Kbd className="absolute top-1/2 right-2 -translate-y-1/2">y</Kbd>
 					</Button>
 				</DialogFooter>
 			</DialogContent>

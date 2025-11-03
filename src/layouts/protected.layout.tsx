@@ -1,11 +1,10 @@
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { AppHeader } from "@/components/app-header";
-import { SidebarProvider, SidebarInset } from "@/components/sidebar/sidebar";
+import { AppHeader } from "@/components/layout/app-header";
 import { Outlet, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { paths } from "@/nav/paths";
 import { useAppContext } from "@/client";
 import { PendingCard } from "@/components/pending-card";
+import { AppFooter } from "@/components/layout/app-footer";
 
 export function ProtectedLayout() {
 	const navigate = useNavigate();
@@ -31,16 +30,14 @@ export function ProtectedLayout() {
 	}
 
 	return (
-		<SidebarProvider>
-			<AppSidebar variant="inset" />
-			<SidebarInset>
-				<AppHeader />
-				<div className="flex flex-1 flex-col">
-					<div className="@container/main flex flex-1 flex-col gap-2">
-						<Outlet />
-					</div>
+		<div className="relative">
+			<AppHeader />
+			<div className="flex flex-1 flex-col">
+				<div className="@container/main flex flex-1 flex-col gap-2">
+					<Outlet />
 				</div>
-			</SidebarInset>
-		</SidebarProvider>
+			</div>
+			<AppFooter />
+		</div>
 	);
 }
