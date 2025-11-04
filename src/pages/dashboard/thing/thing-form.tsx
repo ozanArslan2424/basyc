@@ -10,10 +10,12 @@ import { useMutation } from "@tanstack/react-query";
 import type { ComponentProps, RefObject } from "react";
 
 type ThingFormProps = ComponentProps<"div"> & {
-	textareaRef: RefObject<HTMLTextAreaElement | null>;
+	thing?: ThingData | null;
+	onReset?: () => void;
+	textareaRef?: RefObject<HTMLTextAreaElement | null>;
 };
 
-export function ThingForm({ textareaRef, ...rest }: ThingFormProps) {
+export function ThingForm({ textareaRef, thing, onReset, ...rest }: ThingFormProps) {
 	const ctx = useAppContext();
 
 	const thingCreateMutation = useMutation(
@@ -23,9 +25,28 @@ export function ThingForm({ textareaRef, ...rest }: ThingFormProps) {
 		}),
 	);
 
+	const thingUpdateMutation = useMutation(
+		ctx.thingService.update((res) => {
+			ctx.queryService.queryClient.setQueryData<ThingData[]>([QK_THING.LIST], (prev) =>
+				prev ? prev.map((t) => (t.id === res.id ? res : t)) : [],
+			);
+			form.reset();
+		}),
+	);
+
 	const form = useForm({
 		schema: ThingCreateDataSchema,
-		onSubmit: (body) => thingCreateMutation.mutate(body),
+		defaultValues: {
+			content: thing?.content,
+		},
+		onSubmit: (body) => {
+			if (thing) {
+				thingUpdateMutation.mutate({ thingId: thing.id, ...body });
+			} else {
+				thingCreateMutation.mutate(body);
+			}
+		},
+		onReset,
 	});
 
 	return (
@@ -35,7 +56,20 @@ export function ThingForm({ textareaRef, ...rest }: ThingFormProps) {
 					<FormField form={form} name="content" id="content">
 						<Textarea placeholder="thing goes here" required ref={textareaRef} />
 					</FormField>
-					<Button size="sm">Submit</Button>
+					{thing ? (
+						<div className="grid grid-cols-3 items-center gap-2">
+							<Button type="reset" variant="ghost" size="sm" className="col-span-1">
+								Reset
+							</Button>
+							<Button type="submit" size="sm" className="col-span-2">
+								Submit
+							</Button>
+						</div>
+					) : (
+						<Button type="submit" size="sm">
+							Submit
+						</Button>
+					)}
 				</form>
 			</CardContent>
 		</Card>

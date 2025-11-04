@@ -5,7 +5,12 @@ import { HTTPError } from "@/lib/error.utils";
 import { PersonSchema, ThingSchema } from "prisma/generated/zod/schemas";
 import { openapi } from "@elysiajs/openapi";
 import z from "zod";
-import { ThingAssignDataSchema, ThingCreateDataSchema } from "@/schemas/thing.schemas";
+import {
+	ThingAssignDataSchema,
+	ThingCreateDataSchema,
+	ThingDeleteDataSchema,
+	ThingUpdateDataSchema,
+} from "@/schemas/thing.schemas";
 import { getErrorResult } from "@/services/error/get-error-result.server";
 
 const prisma = new PrismaClient();
@@ -98,6 +103,25 @@ export const server = new Elysia()
 					auth: true,
 				},
 			)
+			.put(
+				"/",
+				async (c) => {
+					const body = c.body;
+					const thing = await c.prisma.thing.update({
+						where: { id: body.thingId },
+						data: { content: body.content },
+						include: { assignedTo: true },
+					});
+					return thing;
+				},
+				{
+					body: ThingUpdateDataSchema,
+					response: ThingSchema.extend({
+						assignedTo: PersonSchema.nullable(),
+					}),
+					auth: true,
+				},
+			)
 			.get(
 				"/",
 				async (c) => {
@@ -130,6 +154,18 @@ export const server = new Elysia()
 						assignedTo: PersonSchema.nullable(),
 					}),
 					body: ThingAssignDataSchema,
+				},
+			)
+			.delete(
+				"/",
+				async (c) => {
+					const thingId = c.body.thingId;
+					await c.prisma.thing.delete({
+						where: { id: thingId },
+					});
+				},
+				{
+					body: ThingDeleteDataSchema,
 				},
 			),
 	)

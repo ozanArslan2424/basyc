@@ -1,51 +1,52 @@
+import { useModeContext } from "@/hooks/use-mode";
 import { useCallback, useEffect, useState } from "react";
 
 export function useConfirmDialog(onConfirm: () => void, onCancel?: () => void) {
-	const [open, onOpenChange] = useState(false);
+	const modeCtx = useModeContext();
+	const [open, setOpen] = useState(false);
 
 	const handleCancel = useCallback(() => {
 		onCancel?.();
-		onOpenChange(false);
+		setOpen(false);
 	}, [onCancel]);
 
 	const handleConfirm = useCallback(() => {
 		onConfirm();
-		onOpenChange(false);
+		setOpen(false);
 	}, [onConfirm]);
 
-	const handleNo = useCallback(
-		(e: KeyboardEvent) => {
-			const noKeys = ["Escape", "q", "n"];
-			const isNoKey = noKeys.includes(e.key);
-			if (isNoKey) {
-				handleCancel();
+	const handleOpenChange = useCallback(
+		(value: boolean) => {
+			setOpen(value);
+			if (value) {
+				modeCtx.setMode("action");
+			} else {
+				modeCtx.setMode("normal");
 			}
 		},
-		[handleCancel],
-	);
-
-	const handleYes = useCallback(
-		(e: KeyboardEvent) => {
-			const yesKeys = ["y"];
-			const isYesKey = yesKeys.includes(e.key);
-			if (isYesKey) {
-				handleConfirm();
-			}
-		},
-		[handleConfirm],
+		[modeCtx],
 	);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			handleNo(e);
-			handleYes(e);
+			if (["KeyY"].includes(e.code)) {
+				e.preventDefault();
+				handleConfirm();
+				return;
+			}
+
+			if (["Escape", "KeyQ", "KeyN"].includes(e.code)) {
+				e.preventDefault();
+				handleCancel();
+				return;
+			}
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [handleNo, handleYes]);
+	}, [handleCancel, handleConfirm]);
 
-	return { open, onOpenChange, onConfirm: handleConfirm, onCancel: handleCancel };
+	return { open, onOpenChange: handleOpenChange, onConfirm: handleConfirm, onCancel: handleCancel };
 }
 
 export type ConfirmDialogState = ReturnType<typeof useConfirmDialog>;

@@ -8,10 +8,10 @@ model Thing {
     attachments Attachment[] @relation("thing_attachments")
 
     assignedToId Int?
-    assignedTo   Person? @relation("thing_assigned_to", fields: [assignedToId], references: [id])
+    assignedTo   Person? @relation("thing_assigned_to", fields: [assignedToId], references: [id], onDelete: SetNull)
 
     createdById Int
-    createdBy   Person @relation("thing_created_by", fields: [createdById], references: [id])
+    createdBy   Person @relation("thing_created_by", fields: [createdById], references: [id], onDelete: Cascade)
 
     @@map("thing")
 }

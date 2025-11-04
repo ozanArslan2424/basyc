@@ -7,9 +7,9 @@ model Attachment {
     size      Float
 
     createdById Int
-    createdBy   Person @relation("attachment_created_by", fields: [createdById], references: [id])
+    createdBy   Person @relation("attachment_created_by", fields: [createdById], references: [id], onDelete: Cascade)
     thingId     Int
-    thing       Thing  @relation("thing_attachments", fields: [thingId], references: [id])
+    thing       Thing  @relation("thing_attachments", fields: [thingId], references: [id], onDelete: Cascade)
 }
 
 enum AttachmentType {

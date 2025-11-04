@@ -1,114 +1,50 @@
 import { useAppContext } from "@/client";
 import { PageContent } from "@/components/page-content";
-import { Dialog } from "@/components/ui/dialog";
 import { useActiveEntity } from "@/hooks/use-active-entity";
 import { useDialog } from "@/hooks/use-dialog";
 import { useDnd } from "@/hooks/use-dnd";
-import { useMode } from "@/hooks/use-mode";
+import { useModeContext } from "@/hooks/use-mode";
 import { cn, repeat } from "@/lib/utils";
 import { PersonCard } from "@/pages/dashboard/person-card";
-import { ThingCard, ThingCardSkeleton } from "@/pages/dashboard/thing-card";
-import { ThingForm } from "@/pages/dashboard/thing-form";
+import { ThingCard, ThingCardSkeleton } from "@/pages/dashboard/thing/thing-card";
+import { ThingForm } from "@/pages/dashboard/thing/thing-form";
 import { ErrorCard } from "@/pages/error/error-card";
 import type { ThingData } from "@/schemas/thing.schemas";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-	Command,
-	CommandInput,
-	CommandList,
-	CommandEmpty,
-	CommandGroup,
-	CommandItem,
-	CommandSeparator,
-	CommandDialog,
-} from "@/components/ui/command";
 import type { Person } from "prisma/generated";
-import { useRef, type ComponentProps } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
-
-type ThingActionDialogProps = ComponentProps<typeof Dialog> & {
-	activeThing: ThingData | null;
-	onSelectThingAction: (key: string) => void;
-};
-
-export function ThingActionDialog({ activeThing, onSelectThingAction, ...rest }: ThingActionDialogProps) {
-	const actions = [
-		{ key: "update", label: "Update content" },
-		{ key: "assign", label: "Assign to someone" },
-		{ key: "delete", label: "Delete" },
-	];
-
-	if (!activeThing) return;
-	return (
-		<CommandDialog {...rest}>
-			<Command className="rounded-lg border shadow-md md:min-w-[450px]">
-				<CommandInput placeholder="Search..." />
-				<CommandList>
-					<CommandEmpty>No results found.</CommandEmpty>
-					<CommandGroup heading="Actions">
-						{actions.map((action) => (
-							<CommandItem key={action.key} value={action.key} onSelect={onSelectThingAction}>
-								<span>{action.label}</span>
-							</CommandItem>
-						))}
-
-						<CommandSeparator />
-						<CommandItem value="close" onSelect={onSelectThingAction}>
-							<span>Close</span>
-						</CommandItem>
-					</CommandGroup>
-				</CommandList>
-			</Command>
-		</CommandDialog>
-	);
-}
+import { ThingActionDialog } from "@/pages/dashboard/thing/thing-action-dialog";
+import { ThingUpdateDialog } from "@/pages/dashboard/thing/thing-update-dialog";
 
 export function DashboardPage() {
 	const ctx = useAppContext();
+	const modeCtx = useModeContext();
 	const { t } = useTranslation("common");
 
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-	const thingListQuery = useQuery(ctx.thingService.queryList());
 	const personListQuery = useQuery(ctx.personService.queryList());
-	const thingAssignMutation = useMutation(ctx.thingService.assign());
-
-	const activeThing = useActiveEntity<ThingData>();
-	const activePerson = useActiveEntity<Person>();
-
-	const thingActionDialog = useDialog();
+	const personActive = useActiveEntity<Person>();
 	const personActionDialog = useDialog();
 
-	const thingDeleteDialog = useConfirmDialog(() => toast("deleetttteteeee"));
-
-	const els = [
-		{
-			id: "form",
-			onAction: () => {
-				textareaRef.current?.focus();
-			},
-		},
-		...(thingListQuery.data ?? []).map((t) => ({
-			id: `thing-${t.id}`,
-			onAction: () => {
-				activeThing.set(t);
-				thingActionDialog.onOpenChange(true);
-			},
-		})),
-		...(personListQuery.data ?? []).map((p) => ({
-			id: `person-${p.id}`,
-			onAction: () => {
-				activePerson.set(p);
-				personActionDialog.onOpenChange(true);
-			},
-		})),
-	];
-
-	const vm = useMode(els);
-
+	const thingListQuery = useQuery(ctx.thingService.queryList());
+	const thingAssignMutation = useMutation(ctx.thingService.assign());
+	const thingDeleteMutation = useMutation(ctx.thingService.delete());
+	const thingActive = useActiveEntity<ThingData>();
+	const thingActionDialog = useDialog();
+	const thingUpdateDialog = useDialog();
+	const thingDeleteDialog = useConfirmDialog(() => {
+		if (!thingActive.entity) {
+			toast.error("Nothing selected!");
+			return;
+		}
+		thingDeleteMutation.mutate({ thingId: thingActive.entity.id });
+		thingActive.set(null);
+	});
 	const thingDnd = useDnd({
 		onDrop: (sourceData, targetData) => {
 			const personId = Number(sourceData.sourceId);
@@ -117,20 +53,41 @@ export function DashboardPage() {
 		},
 	});
 
+	useEffect(() => {
+		if (personListQuery.data && thingListQuery.data) {
+			modeCtx.setEls([
+				{ id: "form", onAction: () => textareaRef.current?.focus() },
+				...thingListQuery.data.map((t) => ({
+					id: `thing-${t.id}`,
+					onAction: () => {
+						thingActive.set(t);
+						thingActionDialog.onOpenChange(true);
+					},
+				})),
+				...personListQuery.data.map((p) => ({
+					id: `person-${p.id}`,
+					onAction: () => {
+						personActive.set(p);
+						personActionDialog.onOpenChange(true);
+					},
+				})),
+			]);
+		}
+		// oxlint-disable-next-line exhaustive-deps
+	}, [personListQuery.data, thingListQuery.data]);
+
 	function handleSelectThingAction(key: string) {
-		toast(key);
 		switch (key) {
 			case "update":
+				thingUpdateDialog.onOpenChange(true);
 				break;
 			case "assign":
 				break;
 			case "delete":
-				thingActionDialog.onOpenChange(false);
 				thingDeleteDialog.onOpenChange(true);
 				break;
 			case "close":
 			default:
-				thingActionDialog.onOpenChange(false);
 				break;
 		}
 	}
@@ -145,10 +102,11 @@ export function DashboardPage() {
 	return (
 		<>
 			<ThingActionDialog
-				activeThing={activeThing.entity}
+				activeThing={thingActive.entity}
 				onSelectThingAction={handleSelectThingAction}
 				{...thingActionDialog}
 			/>
+			<ThingUpdateDialog thing={thingActive.entity} {...thingUpdateDialog} />
 			<ConfirmDialog
 				title="You are about to delete this thing."
 				description="Once a thing is deleted, it stays deleted. Are you sure?"
@@ -164,9 +122,9 @@ export function DashboardPage() {
 								className={cn(
 									"outline-2 outline-transparent transition-all",
 									"flex h-max flex-1 flex-col gap-4",
-									vm.getIsFocused("form") && "outline-ring",
+									modeCtx.getIsFocused("form") && "outline-ring",
 								)}
-								{...vm.registerElement("form")}
+								{...modeCtx.registerElement("form")}
 							/>
 
 							<div className="flex flex-1 flex-col gap-4">
@@ -178,10 +136,10 @@ export function DashboardPage() {
 												thing={thing}
 												onDragOver={thingDnd.handleDragOver}
 												onDrop={(e) => thingDnd.handleDrop(e, { targetId: thing.id })}
-												{...vm.registerElement(`thing-${thing.id}`)}
+												{...modeCtx.registerElement(`thing-${thing.id}`)}
 												className={cn(
 													"outline-2 outline-transparent transition-all",
-													vm.getIsFocused(`thing-${thing.id}`) && "outline-ring",
+													modeCtx.getIsFocused(`thing-${thing.id}`) && "outline-ring",
 												)}
 											/>
 										))}
@@ -197,13 +155,13 @@ export function DashboardPage() {
 										<PersonCard
 											person={person}
 											key={person.id}
-											{...vm.registerElement(`person-${person.id}`)}
+											{...modeCtx.registerElement(`person-${person.id}`)}
 											draggable
 											onDragStart={(e) => thingDnd.handleDragStart(e, { sourceId: person.id })}
-											isActive={vm.getIsFocused(`person-${person.id}`)}
+											isActive={modeCtx.getIsFocused(`person-${person.id}`)}
 											className={cn(
 												"relative h-max w-max cursor-grab rounded-full outline-4 outline-transparent transition-all active:cursor-grabbing",
-												vm.getIsFocused(`person-${person.id}`) && "outline-ring",
+												modeCtx.getIsFocused(`person-${person.id}`) && "outline-ring",
 											)}
 										/>
 									))}

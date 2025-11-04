@@ -19,13 +19,13 @@ export function AppHeader() {
 	}
 
 	return (
-		<header className="flex h-10 shrink-0 items-center justify-between border-b">
+		<header className="border-muted flex h-10 shrink-0 items-center justify-between border-y">
 			<div className="flex items-center px-4 lg:px-12"></div>
 			<div className="flex items-center px-4 lg:px-12">
 				{isMounted ? (
 					<button
 						type="button"
-						className="bg-background hover:bg-accent inline-flex h-10 w-10 items-center justify-center"
+						className="bg-background hover:bg-accent border-muted inline-flex h-10 w-10 items-center justify-center border-y"
 						onClick={toggleTheme}
 					>
 						{resolvedTheme === "dark" ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
@@ -33,14 +33,14 @@ export function AppHeader() {
 				) : (
 					<button
 						type="button"
-						className="bg-background hover:bg-accent inline-flex h-10 w-10 items-center justify-center"
+						className="bg-background hover:bg-accent border-muted inline-flex h-10 w-10 items-center justify-center border-y"
 					>
 						<Loader2Icon className="size-4" />
 					</button>
 				)}
 				<button
 					type="button"
-					className="bg-background hover:bg-accent inline-flex h-10 w-10 items-center justify-center"
+					className="bg-background hover:bg-accent border-muted inline-flex h-10 w-10 items-center justify-center border-y"
 					onClick={handleSearchClick}
 				>
 					<SearchIcon className="size-4" />

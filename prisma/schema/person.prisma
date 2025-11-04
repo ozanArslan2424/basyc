@@ -14,7 +14,7 @@ model Person {
     createdAttachments Attachment[] @relation("attachment_created_by")
 
     userId String @unique
-    user   User   @relation("user_person", fields: [userId], references: [id])
+    user   User   @relation("user_person", fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("profile")
 }

@@ -8,6 +8,12 @@ export const ThingCreateDataSchema = z.object({
 
 export type ThingCreateData = z.infer<typeof ThingCreateDataSchema>;
 
+export const ThingUpdateDataSchema = ThingCreateDataSchema.extend({
+	thingId: z.number(),
+});
+
+export type ThingUpdateData = z.infer<typeof ThingUpdateDataSchema>;
+
 export const ThingAssignDataSchema = z.object({
 	thingId: z.number(),
 	personId: z.number(),
@@ -20,3 +26,9 @@ export type ThingData = Prettify<
 		assignedTo: Person | null;
 	}
 >;
+
+export const ThingDeleteDataSchema = z.object({
+	thingId: z.number(),
+});
+
+export type ThingDeleteData = z.infer<typeof ThingDeleteDataSchema>;

@@ -1,93 +1,19 @@
-import {
-	useState,
-	useEffect,
-	useRef,
-	useCallback,
-	type Ref,
-	createContext,
-	type ReactNode,
-	type Dispatch,
-	type SetStateAction,
-	use,
-	type RefObject,
-} from "react";
-import { toast } from "sonner";
+import { useState, useEffect, useRef, useCallback, type Ref, createContext, type ReactNode, use } from "react";
 
 type El = HTMLDivElement;
-type Mode = "normal" | "visual";
+type Mode = "normal" | "visual" | "action";
 
-const ModeContext = createContext<{
-	mode: Mode;
-	setMode: Dispatch<SetStateAction<Mode>>;
-	keysBuffer: string[];
-	setKeysBuffer: Dispatch<SetStateAction<string[]>>;
-	keyTimeoutRef: RefObject<NodeJS.Timeout | null>;
-} | null>(null);
-
-export function ModeProvider({ children }: { children: ReactNode }) {
+function useMode() {
+	const [els, setEls] = useState<{ id: string; onAction: () => void }[]>([]);
 	const [mode, setMode] = useState<Mode>("normal");
 	const [keysBuffer, setKeysBuffer] = useState<string[]>([]);
-	const keyTimeoutRef = useRef<NodeJS.Timeout>(null);
-
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (keyTimeoutRef.current) clearTimeout(keyTimeoutRef.current);
-
-			setKeysBuffer((prev) => [...prev, e.key]);
-			toast(`code: ${e.code}, arr: ${keysBuffer.join(", ")}`);
-
-			keyTimeoutRef.current = setTimeout(() => {
-				setKeysBuffer([]);
-			}, 500);
-		};
-
-		document.addEventListener("keydown", handleKeyDown);
-		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [keysBuffer]);
-
-	return <ModeContext value={{ mode, setMode, keysBuffer, setKeysBuffer, keyTimeoutRef }}>{children}</ModeContext>;
-}
-
-export function useModeContext() {
-	const context = use(ModeContext);
-	if (!context) throw new Error("useModeContext missing provider");
-	return context;
-}
-
-export function useMode(els: { id: string; onAction: () => void }[] = []) {
-	const { mode, setMode, keysBuffer, setKeysBuffer, keyTimeoutRef } = useModeContext();
 	const [currentFocusIndex, setCurrentFocusIndex] = useState(0);
+
+	const keyTimeoutRef = useRef<NodeJS.Timeout>(null);
 	const elementRefs = useRef<El[]>([]);
+	const leaderClicked = useRef<boolean>(false);
 
 	const getEl = useCallback((id: string) => els.find((el) => el.id === id), [els]);
-
-	useEffect(() => {
-		elementRefs.current = elementRefs.current.slice(0, Object.keys(els).length);
-	}, [els]);
-
-	useEffect(() => {
-		if (mode === "visual" && currentFocusIndex >= 0) {
-			const currentElement = elementRefs.current[currentFocusIndex];
-			if (currentElement) currentElement.focus();
-		}
-	}, [mode, currentFocusIndex]);
-
-	const isValidSequence = useCallback(
-		(...keys: string[]): boolean => {
-			if (keysBuffer.length < keys.length) {
-				return false;
-			}
-
-			const lastKeys = keysBuffer.slice(-keys.length);
-			return lastKeys.every((key, index) => key === keys[index]);
-		},
-		[keysBuffer],
-	);
-
-	const isValidIndex = useCallback((index: number, collection: ArrayLike<unknown>): boolean => {
-		if (isNaN(index)) return false;
-		return Number.isInteger(index) && index >= 0 && index < collection.length;
-	}, []);
 
 	const registerElement = useCallback(
 		(
@@ -111,66 +37,40 @@ export function useMode(els: { id: string; onAction: () => void }[] = []) {
 		[mode, currentFocusIndex, els],
 	);
 
-	const handleKeySequence = useCallback(
-		(e: KeyboardEvent) => {
-			if (e.code === "Escape") {
-				toast("cleared");
-				setKeysBuffer([]);
-				if (keyTimeoutRef.current) clearTimeout(keyTimeoutRef.current);
-				return;
-			}
+	useEffect(() => {
+		const isValidIndex = (index: number, collection: ArrayLike<unknown>): boolean => {
+			if (isNaN(index)) return false;
+			return Number.isInteger(index) && index >= 0 && index < collection.length;
+		};
 
-			if (mode === "visual") {
-				const index = parseInt(e.key);
-				if (isValidIndex(index, els)) {
-					setCurrentFocusIndex(index);
+		const handleNavigation = (e: KeyboardEvent) => {
+			const isArrowKey = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key);
+			const isIndexKey = isValidIndex(parseInt(e.key), els);
+
+			if (isArrowKey) {
+				e.preventDefault();
+
+				let newIndex = currentFocusIndex;
+				const totalEls = elementRefs.current.length;
+
+				if (["ArrowRight", "ArrowDown", "Tab"].includes(e.key)) {
+					newIndex = (currentFocusIndex + 1) % totalEls;
+					setCurrentFocusIndex(newIndex);
+					return;
 				}
-				setKeysBuffer([]);
-				if (keyTimeoutRef.current) clearTimeout(keyTimeoutRef.current);
+
+				if (["ArrowLeft", "ArrowUp"].includes(e.key)) {
+					newIndex = (currentFocusIndex - 1 + totalEls) % totalEls;
+					setCurrentFocusIndex(newIndex);
+					return;
+				}
 				return;
+			} else if (isIndexKey) {
+				setCurrentFocusIndex(parseInt(e.key));
 			}
+		};
 
-			if (isValidSequence(" ", "v")) {
-				setMode("visual");
-				setKeysBuffer([]);
-				if (keyTimeoutRef.current) clearTimeout(keyTimeoutRef.current);
-			}
-		},
-		[mode, els, isValidSequence, isValidIndex, setKeysBuffer, setMode, keyTimeoutRef],
-	);
-
-	const handleArrowNavigation = useCallback(
-		(e: KeyboardEvent) => {
-			const arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"];
-			const isArrowKey = arrowKeys.includes(e.key);
-			if (!isArrowKey) return;
-
-			e.preventDefault();
-
-			let newIndex = currentFocusIndex;
-			const totalEls = elementRefs.current.length;
-
-			const nextKeys = ["ArrowRight", "ArrowDown", "Tab"];
-			const isNextKey = nextKeys.includes(e.key);
-			if (isNextKey) {
-				newIndex = (currentFocusIndex + 1) % totalEls;
-				setCurrentFocusIndex(newIndex);
-				return;
-			}
-
-			const prevKeys = ["ArrowLeft", "ArrowUp"];
-			const isPrevKey = prevKeys.includes(e.key);
-			if (isPrevKey) {
-				newIndex = (currentFocusIndex - 1 + totalEls) % totalEls;
-				setCurrentFocusIndex(newIndex);
-				return;
-			}
-		},
-		[currentFocusIndex],
-	);
-
-	const handleEnterKey = useCallback(
-		(e: KeyboardEvent) => {
+		const handleEnterKey = (e: KeyboardEvent) => {
 			const enterKeys = ["Enter", "Space"];
 			const isEnterKey = enterKeys.includes(e.key);
 			if (!isEnterKey) return;
@@ -183,42 +83,113 @@ export function useMode(els: { id: string; onAction: () => void }[] = []) {
 			const el = getEl(elId);
 			if (!el || !el.onAction) return;
 
+			setMode("action");
 			el.onAction();
-			setMode("normal");
-		},
-		[currentFocusIndex, getEl, setMode],
-	);
+		};
 
-	const handleEscapeKey = useCallback(
-		(e: KeyboardEvent) => {
-			const escapeKeys = ["Escape", "q"];
-			const isEscapeKey = escapeKeys.includes(e.key);
+		const handleEscapeKey = (e: KeyboardEvent) => {
+			const escapeKeys = ["Escape", "KeyQ"];
+			const isEscapeKey = escapeKeys.includes(e.code);
 			if (!isEscapeKey) return;
 
 			setMode("normal");
-		},
-		[setMode],
-	);
+		};
 
-	useEffect(() => {
+		const reset = () => {
+			setKeysBuffer([]);
+			leaderClicked.current = false;
+		};
+
+		const handleKey = (e: KeyboardEvent) => {
+			if (mode === "normal" && e.code === "Space") {
+				leaderClicked.current = true;
+			}
+
+			setKeysBuffer((prev) => [...prev, e.code]);
+
+			keyTimeoutRef.current = setTimeout(() => {
+				reset();
+			}, 500);
+		};
+
+		const handleKeySequence = (e: KeyboardEvent) => {
+			if (keyTimeoutRef.current) clearTimeout(keyTimeoutRef.current);
+
+			if (mode !== "normal" && e.code === "Escape") {
+				reset();
+				return;
+			}
+
+			if (!leaderClicked.current) {
+				handleKey(e);
+				return;
+			}
+
+			switch (e.code) {
+				case "KeyV":
+					setMode("visual");
+					reset();
+					break;
+
+				default:
+					handleKey(e);
+					break;
+			}
+		};
+
 		const handleKeyDown = (e: KeyboardEvent) => {
-			handleKeySequence(e);
-			if (mode === "visual") {
-				handleArrowNavigation(e);
-				handleEnterKey(e);
+			if (mode !== "normal") {
 				handleEscapeKey(e);
+			}
+			if (mode !== "action") {
+				handleKeySequence(e);
+				if (mode === "visual") {
+					handleNavigation(e);
+					handleEnterKey(e);
+				}
 			}
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [mode, handleKeySequence, handleArrowNavigation, handleEnterKey, handleEscapeKey]);
+	}, [keysBuffer, mode, els, getEl, currentFocusIndex]);
+
+	useEffect(() => {
+		elementRefs.current = elementRefs.current.slice(0, Object.keys(els).length);
+	}, [els]);
+
+	useEffect(() => {
+		if (mode === "visual" && currentFocusIndex >= 0) {
+			const currentElement = elementRefs.current[currentFocusIndex];
+			if (currentElement) currentElement.focus();
+		}
+	}, [mode, currentFocusIndex]);
 
 	return {
 		mode,
+		setMode,
+		keysBuffer,
+		setKeysBuffer,
+		keyTimeoutRef,
 		currentFocusIndex,
 		registerElement,
 		getIsFocused,
 		elementRefs: elementRefs.current,
+		els,
+		setEls,
 	};
+}
+
+const ModeContext = createContext<ReturnType<typeof useMode> | null>(null);
+
+export function ModeProvider({ children }: { children: ReactNode }) {
+	const value = useMode();
+
+	return <ModeContext value={value}>{children}</ModeContext>;
+}
+
+export function useModeContext() {
+	const context = use(ModeContext);
+	if (!context) throw new Error("useModeContext missing provider");
+	return context;
 }

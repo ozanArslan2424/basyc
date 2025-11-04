@@ -6,25 +6,60 @@ export function AppFooter() {
 
 	const modeColors = {
 		normal: "bg-muted text-muted-foreground",
-		visual: "bg-success text-foreground",
+		visual: "bg-emerald-600 text-foreground",
+		action: "bg-amber-600 text-white",
 	};
 
+	function getKeyLabel(code: string) {
+		// Remove "Key" prefix from letters
+		if (code.startsWith("Key")) return code.slice(3).toLocaleLowerCase();
+
+		// Remove "Digit" prefix from numbers
+		if (code.startsWith("Digit")) return code.slice(5).toLocaleLowerCase();
+
+		// Special cases
+		const specialCases: Record<string, string> = {
+			Space: "<space>",
+			ShiftLeft: "<shift>",
+			ShiftRight: "<shift>",
+			ControlLeft: "<ctrl>",
+			ControlRight: "<ctrl>",
+			AltLeft: "<alt>",
+			AltRight: "<alt>",
+			MetaLeft: "<meta>",
+			MetaRight: "<meta>",
+			ArrowUp: "↑",
+			ArrowDown: "↓",
+			ArrowLeft: "←",
+			ArrowRight: "→",
+			Escape: "<escape>",
+			Backspace: "<backspace>",
+			CapsLock: "<caps>",
+			Delete: "<del>",
+			Insert: "<insert>",
+			PageUp: "<pgup>",
+			PageDown: "<pgdown>",
+		};
+
+		return specialCases[code] || code.toLocaleLowerCase();
+	}
+
 	return (
-		<footer className="fixed bottom-0 left-0 flex h-10 w-full shrink-0 items-center justify-between border-t">
+		<footer className="border-muted fixed bottom-4 left-0 flex h-8 w-full shrink-0 items-center justify-between border-y">
 			<div className="flex items-center px-4 lg:px-12">
 				<div
 					className={cn(
-						"inline-flex h-10 items-center justify-center px-4 text-sm font-semibold uppercase select-none",
+						"border-muted inline-flex h-8 items-center justify-center border-y px-4 text-sm font-semibold uppercase select-none",
 						modeColors[mode],
 					)}
 				>
 					{mode}
 				</div>
-				<div className="bg-muted/10 text-muted-foreground inline-flex max-w-[200px] items-center justify-end overflow-hidden px-4 text-right text-sm whitespace-nowrap">
+				<div className="border-muted text-muted-foreground inline-flex h-8 max-w-[200px] items-center justify-end overflow-hidden border-y px-4 text-right font-mono text-sm whitespace-nowrap">
 					{keysBuffer
 						.slice(-5)
-						.map((k) => (k === " " ? "<space>" : k))
-						.join(" ")}
+						.map((k) => getKeyLabel(k))
+						.join("")}
 				</div>
 			</div>
 			<div className="flex items-center px-4 lg:px-12"></div>
