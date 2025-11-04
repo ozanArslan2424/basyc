@@ -7,6 +7,9 @@ const makeSchema = () =>
 			id: z.number().int().optional(),
 			createdAt: z.coerce.date().optional(),
 			content: z.string(),
+			isDone: z.boolean().optional(),
+			doneDate: z.coerce.date().optional().nullable(),
+			dueDate: z.coerce.date().optional().nullable(),
 			assignedToId: z.number().int().optional().nullable(),
 			createdById: z.number().int(),
 		})

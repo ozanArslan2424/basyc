@@ -17,8 +17,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
-import { ThingActionDialog } from "@/pages/dashboard/thing/thing-action-dialog";
+import { ActionDialog } from "@/modals/action-dialog";
 import { ThingUpdateDialog } from "@/pages/dashboard/thing/thing-update-dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { ThingDetailDialog } from "@/pages/dashboard/thing/thing-detail-dialog";
 
 export function DashboardPage() {
 	const ctx = useAppContext();
@@ -33,23 +35,51 @@ export function DashboardPage() {
 
 	const thingListQuery = useQuery(ctx.thingService.queryList());
 	const thingAssignMutation = useMutation(ctx.thingService.assign());
+	const thingDoneMutation = useMutation(ctx.thingService.done());
 	const thingDeleteMutation = useMutation(ctx.thingService.delete());
 	const thingActive = useActiveEntity<ThingData>();
 	const thingActionDialog = useDialog();
 	const thingUpdateDialog = useDialog();
-	const thingDeleteDialog = useConfirmDialog(() => {
-		if (!thingActive.entity) {
-			toast.error("Nothing selected!");
-			return;
-		}
-		thingDeleteMutation.mutate({ thingId: thingActive.entity.id });
-		thingActive.set(null);
-	});
-	const thingDnd = useDnd({
+	const thingDetailDialog = useDialog();
+	const thingDeleteDialog = useConfirmDialog(handleConfirmThingDelete);
+	const thingActions = [
+		{
+			key: "detail",
+			label: "See details",
+			onSelect: () => {
+				thingDetailDialog.onOpenChange(true);
+			},
+		},
+		{
+			key: "update",
+			label: "Update content",
+			onSelect: () => {
+				thingUpdateDialog.onOpenChange(true);
+			},
+		},
+		{ key: "assign", label: "Assign to someone", onSelect: () => {} },
+		{
+			key: "delete",
+			label: "Delete",
+			onSelect: () => {
+				thingDeleteDialog.onOpenChange(true);
+			},
+		},
+	];
+
+	const assignmentDnd = useDnd({
 		onDrop: (sourceData, targetData) => {
 			const personId = Number(sourceData.sourceId);
 			const thingId = Number(targetData.targetId);
 			thingAssignMutation.mutate({ thingId, personId });
+		},
+	});
+
+	const doneDnd = useDnd({
+		onDrop: (sourceData, targetData) => {
+			const thingId = Number(sourceData.sourceId);
+			const isDone = targetData.targetId === "done";
+			thingDoneMutation.mutate({ thingId, isDone });
 		},
 	});
 
@@ -76,20 +106,22 @@ export function DashboardPage() {
 		// oxlint-disable-next-line exhaustive-deps
 	}, [personListQuery.data, thingListQuery.data]);
 
-	function handleSelectThingAction(key: string) {
-		switch (key) {
-			case "update":
-				thingUpdateDialog.onOpenChange(true);
-				break;
-			case "assign":
-				break;
-			case "delete":
-				thingDeleteDialog.onOpenChange(true);
-				break;
-			case "close":
-			default:
-				break;
+	function handleConfirmThingDelete() {
+		if (!thingActive.entity) {
+			toast.error("Nothing selected!");
+			return;
 		}
+		thingDeleteMutation.mutate({ thingId: thingActive.entity.id });
+		thingActive.set(null);
+	}
+
+	function handleThingClick(thing: ThingData) {
+		thingActive.set(thing);
+		thingActionDialog.onOpenChange(true);
+	}
+
+	function handlePersonClick(person: Person) {
+		personActive.set(person);
 	}
 
 	const browserTitle = t("app.name");
@@ -101,11 +133,8 @@ export function DashboardPage() {
 
 	return (
 		<>
-			<ThingActionDialog
-				activeThing={thingActive.entity}
-				onSelectThingAction={handleSelectThingAction}
-				{...thingActionDialog}
-			/>
+			<ActionDialog actions={thingActions} {...thingActionDialog} />
+			<ThingDetailDialog thing={thingActive.entity} {...thingDetailDialog} />
 			<ThingUpdateDialog thing={thingActive.entity} {...thingUpdateDialog} />
 			<ConfirmDialog
 				title="You are about to delete this thing."
@@ -114,57 +143,131 @@ export function DashboardPage() {
 			/>
 
 			<PageContent browserTitle={browserTitle}>
-				<div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-					<div className="col-span-4 md:col-span-8">
-						<div className="flex flex-col gap-4 lg:flex-row">
-							<ThingForm
-								textareaRef={textareaRef}
-								className={cn(
-									"outline-2 outline-transparent transition-all",
-									"flex h-max flex-1 flex-col gap-4",
-									modeCtx.getIsFocused("form") && "outline-ring",
-								)}
-								{...modeCtx.registerElement("form")}
-							/>
+				<div className="grid grid-cols-12 gap-8">
+					<div className="col-span-4">
+						<div className="flex w-full flex-col gap-4">
+							<div className="flex flex-col gap-4">
+								<h1 className="text-lg font-bold">Write a thing</h1>
+								<Card
+									className={cn(
+										"outline-2 outline-transparent transition-all",
+										"drop-zone flex h-max flex-1 flex-col gap-3",
+										modeCtx.getIsFocused("form") && "outline-ring",
+									)}
+									{...modeCtx.registerElement("form")}
+								>
+									<CardContent>
+										<ThingForm textareaRef={textareaRef} />
+									</CardContent>
+								</Card>
+							</div>
 
-							<div className="flex flex-1 flex-col gap-4">
+							<div className="flex flex-col gap-4">
+								<div
+									className={cn(
+										"rounded-lg border p-4 transition-colors",
+										doneDnd.getIsOver("done")
+											? "text-foreground border-primary"
+											: "text-muted-foreground border-border",
+									)}
+									onDragOver={(e) => doneDnd.handleDragOver(e, "done")}
+									onDrop={(e) => doneDnd.handleDrop(e, { targetId: "done" })}
+								>
+									<p className="text-center text-sm font-semibold">Drag here to mark as done</p>
+								</div>
+
 								{thingListQuery.isPending
 									? repeat().map((i) => <ThingCardSkeleton key={i} />)
-									: thingListQuery.data.map((thing) => (
-											<ThingCard
-												key={thing.id}
-												thing={thing}
-												onDragOver={thingDnd.handleDragOver}
-												onDrop={(e) => thingDnd.handleDrop(e, { targetId: thing.id })}
-												{...modeCtx.registerElement(`thing-${thing.id}`)}
-												className={cn(
-													"outline-2 outline-transparent transition-all",
-													modeCtx.getIsFocused(`thing-${thing.id}`) && "outline-ring",
-												)}
-											/>
-										))}
+									: thingListQuery.data
+											.filter((t) => t.isDone)
+											.map((thing) => (
+												<ThingCard
+													key={thing.id}
+													thing={thing}
+													draggable
+													onDragStart={(e) => assignmentDnd.handleDragStart(e, { sourceId: thing.id })}
+													onDragOver={(e) => assignmentDnd.handleDragOver(e, thing.id)}
+													onDrop={(e) => assignmentDnd.handleDrop(e, { targetId: thing.id })}
+													{...modeCtx.registerElement(`thing-${thing.id}`)}
+													className={cn(
+														"outline-2 outline-transparent transition-all",
+														"hover:outline-secondary cursor-pointer",
+														modeCtx.getIsFocused(`thing-${thing.id}`) && "outline-ring",
+														assignmentDnd.getIsOver(thing.id) && "outline-secondary",
+														thing.isDone && "opacity-50 hover:opacity-100",
+													)}
+													onClick={() => handleThingClick(thing)}
+												/>
+											))}
 							</div>
 						</div>
 					</div>
 
 					<div className="col-span-4">
-						<div className="hidden grid-cols-4 gap-4 sm:grid md:grid-cols-2 xl:grid-cols-4">
-							{personListQuery.isPending
+						<div className="flex flex-1 flex-col gap-4">
+							<h1 className="text-lg font-bold">Things</h1>
+
+							{thingListQuery.isPending
 								? repeat().map((i) => <ThingCardSkeleton key={i} />)
-								: personListQuery.data.map((person) => (
-										<PersonCard
-											person={person}
-											key={person.id}
-											{...modeCtx.registerElement(`person-${person.id}`)}
-											draggable
-											onDragStart={(e) => thingDnd.handleDragStart(e, { sourceId: person.id })}
-											isActive={modeCtx.getIsFocused(`person-${person.id}`)}
-											className={cn(
-												"relative h-max w-max cursor-grab rounded-full outline-4 outline-transparent transition-all active:cursor-grabbing",
-												modeCtx.getIsFocused(`person-${person.id}`) && "outline-ring",
-											)}
-										/>
-									))}
+								: thingListQuery.data
+										.filter((t) => !t.isDone)
+										.map((thing) => (
+											<ThingCard
+												key={thing.id}
+												thing={thing}
+												draggable
+												onDragStart={(e) => assignmentDnd.handleDragStart(e, { sourceId: thing.id })}
+												onDragOver={(e) => assignmentDnd.handleDragOver(e, thing.id)}
+												onDrop={(e) => assignmentDnd.handleDrop(e, { targetId: thing.id })}
+												{...modeCtx.registerElement(`thing-${thing.id}`)}
+												className={cn(
+													"outline-2 outline-transparent transition-all",
+													"hover:outline-secondary cursor-pointer",
+													modeCtx.getIsFocused(`thing-${thing.id}`) && "outline-ring",
+													assignmentDnd.getIsOver(thing.id) && "outline-secondary",
+													thing.isDone && "opacity-50 hover:opacity-100",
+												)}
+												onClick={() => handleThingClick(thing)}
+											/>
+										))}
+
+							<div
+								className={cn(
+									"rounded-lg border p-4 transition-colors",
+									doneDnd.getIsOver("not-done")
+										? "text-foreground border-primary"
+										: "text-muted-foreground border-border",
+								)}
+								onDragOver={(e) => doneDnd.handleDragOver(e, "not-done")}
+								onDrop={(e) => doneDnd.handleDrop(e, { targetId: "not-done" })}
+							>
+								<p className="text-center text-sm font-semibold">Drag here to mark as NOT done</p>
+							</div>
+						</div>
+					</div>
+
+					<div className="col-span-4">
+						<div className="flex flex-col gap-4">
+							<h1 className="text-lg font-bold">People</h1>
+							<div className="hidden grid-cols-4 gap-8 sm:grid md:grid-cols-2 xl:grid-cols-4">
+								{personListQuery.isPending
+									? repeat().map((i) => <ThingCardSkeleton key={i} />)
+									: personListQuery.data.map((person) => (
+											<PersonCard
+												person={person}
+												key={person.id}
+												{...modeCtx.registerElement(`person-${person.id}`)}
+												draggable
+												onDragStart={(e) => assignmentDnd.handleDragStart(e, { sourceId: person.id })}
+												isActive={modeCtx.getIsFocused(`person-${person.id}`)}
+												onClick={() => handlePersonClick(person)}
+												className={cn(
+													"relative h-max w-max cursor-grab rounded-full outline-4 outline-transparent transition-all active:cursor-grabbing",
+													modeCtx.getIsFocused(`person-${person.id}`) && "outline-ring",
+												)}
+											/>
+										))}
+							</div>
 						</div>
 					</div>
 				</div>

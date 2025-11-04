@@ -172,6 +172,9 @@ exports.Prisma.ThingScalarFieldEnum = {
 	createdAt: "createdAt",
 	updatedAt: "updatedAt",
 	content: "content",
+	isDone: "isDone",
+	doneDate: "doneDate",
+	dueDate: "dueDate",
 	assignedToId: "assignedToId",
 	createdById: "createdById",
 };

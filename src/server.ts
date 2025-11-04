@@ -9,6 +9,7 @@ import {
 	ThingAssignDataSchema,
 	ThingCreateDataSchema,
 	ThingDeleteDataSchema,
+	ThingDoneDataSchema,
 	ThingUpdateDataSchema,
 } from "@/schemas/thing.schemas";
 import { getErrorResult } from "@/services/error/get-error-result.server";
@@ -140,8 +141,9 @@ export const server = new Elysia()
 			.post(
 				"/assign",
 				async (c) => {
-					const thingId = c.body.thingId;
-					const personId = c.body.personId;
+					const body = c.body;
+					const thingId = body.thingId;
+					const personId = body.personId;
 					const thing = await c.prisma.thing.update({
 						where: { id: thingId },
 						data: { assignedToId: personId },
@@ -150,10 +152,29 @@ export const server = new Elysia()
 					return thing;
 				},
 				{
+					body: ThingAssignDataSchema,
 					response: ThingSchema.extend({
 						assignedTo: PersonSchema.nullable(),
 					}),
-					body: ThingAssignDataSchema,
+				},
+			)
+			.post(
+				"/done",
+				async (c) => {
+					const body = c.body;
+					const thingId = body.thingId;
+					const thing = await c.prisma.thing.update({
+						where: { id: thingId },
+						data: { isDone: body.isDone, doneDate: body.isDone ? new Date() : null },
+						include: { assignedTo: true },
+					});
+					return thing;
+				},
+				{
+					body: ThingDoneDataSchema,
+					response: ThingSchema.extend({
+						assignedTo: PersonSchema.nullable(),
+					}),
 				},
 			)
 			.delete(

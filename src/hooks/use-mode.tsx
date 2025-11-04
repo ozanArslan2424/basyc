@@ -33,7 +33,7 @@ function useMode() {
 	);
 
 	const getIsFocused = useCallback(
-		(id: string) => mode !== "normal" && currentFocusIndex === els.findIndex((el) => el.id === id),
+		(id: string) => mode === "visual" && currentFocusIndex === els.findIndex((el) => el.id === id),
 		[mode, currentFocusIndex, els],
 	);
 

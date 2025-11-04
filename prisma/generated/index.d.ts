@@ -8993,6 +8993,9 @@ export namespace Prisma {
 		createdAt: Date | null;
 		updatedAt: Date | null;
 		content: string | null;
+		isDone: boolean | null;
+		doneDate: Date | null;
+		dueDate: Date | null;
 		assignedToId: number | null;
 		createdById: number | null;
 	};
@@ -9002,6 +9005,9 @@ export namespace Prisma {
 		createdAt: Date | null;
 		updatedAt: Date | null;
 		content: string | null;
+		isDone: boolean | null;
+		doneDate: Date | null;
+		dueDate: Date | null;
 		assignedToId: number | null;
 		createdById: number | null;
 	};
@@ -9011,6 +9017,9 @@ export namespace Prisma {
 		createdAt: number;
 		updatedAt: number;
 		content: number;
+		isDone: number;
+		doneDate: number;
+		dueDate: number;
 		assignedToId: number;
 		createdById: number;
 		_all: number;
@@ -9033,6 +9042,9 @@ export namespace Prisma {
 		createdAt?: true;
 		updatedAt?: true;
 		content?: true;
+		isDone?: true;
+		doneDate?: true;
+		dueDate?: true;
 		assignedToId?: true;
 		createdById?: true;
 	};
@@ -9042,6 +9054,9 @@ export namespace Prisma {
 		createdAt?: true;
 		updatedAt?: true;
 		content?: true;
+		isDone?: true;
+		doneDate?: true;
+		dueDate?: true;
 		assignedToId?: true;
 		createdById?: true;
 	};
@@ -9051,6 +9066,9 @@ export namespace Prisma {
 		createdAt?: true;
 		updatedAt?: true;
 		content?: true;
+		isDone?: true;
+		doneDate?: true;
+		dueDate?: true;
 		assignedToId?: true;
 		createdById?: true;
 		_all?: true;
@@ -9144,6 +9162,9 @@ export namespace Prisma {
 		createdAt: Date;
 		updatedAt: Date;
 		content: string;
+		isDone: boolean;
+		doneDate: Date | null;
+		dueDate: Date | null;
 		assignedToId: number | null;
 		createdById: number;
 		_count: ThingCountAggregateOutputType | null;
@@ -9171,6 +9192,9 @@ export namespace Prisma {
 			createdAt?: boolean;
 			updatedAt?: boolean;
 			content?: boolean;
+			isDone?: boolean;
+			doneDate?: boolean;
+			dueDate?: boolean;
 			assignedToId?: boolean;
 			createdById?: boolean;
 			attachments?: boolean | Thing$attachmentsArgs<ExtArgs>;
@@ -9188,6 +9212,9 @@ export namespace Prisma {
 				createdAt?: boolean;
 				updatedAt?: boolean;
 				content?: boolean;
+				isDone?: boolean;
+				doneDate?: boolean;
+				dueDate?: boolean;
 				assignedToId?: boolean;
 				createdById?: boolean;
 				assignedTo?: boolean | Thing$assignedToArgs<ExtArgs>;
@@ -9203,6 +9230,9 @@ export namespace Prisma {
 				createdAt?: boolean;
 				updatedAt?: boolean;
 				content?: boolean;
+				isDone?: boolean;
+				doneDate?: boolean;
+				dueDate?: boolean;
 				assignedToId?: boolean;
 				createdById?: boolean;
 				assignedTo?: boolean | Thing$assignedToArgs<ExtArgs>;
@@ -9216,12 +9246,15 @@ export namespace Prisma {
 		createdAt?: boolean;
 		updatedAt?: boolean;
 		content?: boolean;
+		isDone?: boolean;
+		doneDate?: boolean;
+		dueDate?: boolean;
 		assignedToId?: boolean;
 		createdById?: boolean;
 	};
 
 	export type ThingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<
-		"id" | "createdAt" | "updatedAt" | "content" | "assignedToId" | "createdById",
+		"id" | "createdAt" | "updatedAt" | "content" | "isDone" | "doneDate" | "dueDate" | "assignedToId" | "createdById",
 		ExtArgs["result"]["thing"]
 	>;
 	export type ThingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9252,6 +9285,9 @@ export namespace Prisma {
 				createdAt: Date;
 				updatedAt: Date;
 				content: string;
+				isDone: boolean;
+				doneDate: Date | null;
+				dueDate: Date | null;
 				assignedToId: number | null;
 				createdById: number;
 			},
@@ -9786,6 +9822,9 @@ export namespace Prisma {
 		readonly createdAt: FieldRef<"Thing", "DateTime">;
 		readonly updatedAt: FieldRef<"Thing", "DateTime">;
 		readonly content: FieldRef<"Thing", "String">;
+		readonly isDone: FieldRef<"Thing", "Boolean">;
+		readonly doneDate: FieldRef<"Thing", "DateTime">;
+		readonly dueDate: FieldRef<"Thing", "DateTime">;
 		readonly assignedToId: FieldRef<"Thing", "Int">;
 		readonly createdById: FieldRef<"Thing", "Int">;
 	}
@@ -10330,6 +10369,9 @@ export namespace Prisma {
 		createdAt: "createdAt";
 		updatedAt: "updatedAt";
 		content: "content";
+		isDone: "isDone";
+		doneDate: "doneDate";
+		dueDate: "dueDate";
 		assignedToId: "assignedToId";
 		createdById: "createdById";
 	};
@@ -10839,6 +10881,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFilter<"Thing"> | Date | string;
 		updatedAt?: DateTimeFilter<"Thing"> | Date | string;
 		content?: StringFilter<"Thing"> | string;
+		isDone?: BoolFilter<"Thing"> | boolean;
+		doneDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
+		dueDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
 		assignedToId?: IntNullableFilter<"Thing"> | number | null;
 		createdById?: IntFilter<"Thing"> | number;
 		attachments?: AttachmentListRelationFilter;
@@ -10851,6 +10896,9 @@ export namespace Prisma {
 		createdAt?: SortOrder;
 		updatedAt?: SortOrder;
 		content?: SortOrder;
+		isDone?: SortOrder;
+		doneDate?: SortOrderInput | SortOrder;
+		dueDate?: SortOrderInput | SortOrder;
 		assignedToId?: SortOrderInput | SortOrder;
 		createdById?: SortOrder;
 		attachments?: AttachmentOrderByRelationAggregateInput;
@@ -10867,6 +10915,9 @@ export namespace Prisma {
 			createdAt?: DateTimeFilter<"Thing"> | Date | string;
 			updatedAt?: DateTimeFilter<"Thing"> | Date | string;
 			content?: StringFilter<"Thing"> | string;
+			isDone?: BoolFilter<"Thing"> | boolean;
+			doneDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
+			dueDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
 			assignedToId?: IntNullableFilter<"Thing"> | number | null;
 			createdById?: IntFilter<"Thing"> | number;
 			attachments?: AttachmentListRelationFilter;
@@ -10881,6 +10932,9 @@ export namespace Prisma {
 		createdAt?: SortOrder;
 		updatedAt?: SortOrder;
 		content?: SortOrder;
+		isDone?: SortOrder;
+		doneDate?: SortOrderInput | SortOrder;
+		dueDate?: SortOrderInput | SortOrder;
 		assignedToId?: SortOrderInput | SortOrder;
 		createdById?: SortOrder;
 		_count?: ThingCountOrderByAggregateInput;
@@ -10898,6 +10952,9 @@ export namespace Prisma {
 		createdAt?: DateTimeWithAggregatesFilter<"Thing"> | Date | string;
 		updatedAt?: DateTimeWithAggregatesFilter<"Thing"> | Date | string;
 		content?: StringWithAggregatesFilter<"Thing"> | string;
+		isDone?: BoolWithAggregatesFilter<"Thing"> | boolean;
+		doneDate?: DateTimeNullableWithAggregatesFilter<"Thing"> | Date | string | null;
+		dueDate?: DateTimeNullableWithAggregatesFilter<"Thing"> | Date | string | null;
 		assignedToId?: IntNullableWithAggregatesFilter<"Thing"> | number | null;
 		createdById?: IntWithAggregatesFilter<"Thing"> | number;
 	};
@@ -11337,6 +11394,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		attachments?: AttachmentCreateNestedManyWithoutThingInput;
 		assignedTo?: PersonCreateNestedOneWithoutAssignedThingsInput;
 		createdBy: PersonCreateNestedOneWithoutCreatedThingsInput;
@@ -11347,6 +11407,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedToId?: number | null;
 		createdById: number;
 		attachments?: AttachmentUncheckedCreateNestedManyWithoutThingInput;
@@ -11356,6 +11419,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		attachments?: AttachmentUpdateManyWithoutThingNestedInput;
 		assignedTo?: PersonUpdateOneWithoutAssignedThingsNestedInput;
 		createdBy?: PersonUpdateOneRequiredWithoutCreatedThingsNestedInput;
@@ -11366,6 +11432,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedToId?: NullableIntFieldUpdateOperationsInput | number | null;
 		createdById?: IntFieldUpdateOperationsInput | number;
 		attachments?: AttachmentUncheckedUpdateManyWithoutThingNestedInput;
@@ -11376,6 +11445,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedToId?: number | null;
 		createdById: number;
 	};
@@ -11384,6 +11456,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 	};
 
 	export type ThingUncheckedUpdateManyInput = {
@@ -11391,6 +11466,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedToId?: NullableIntFieldUpdateOperationsInput | number | null;
 		createdById?: IntFieldUpdateOperationsInput | number;
 	};
@@ -11879,6 +11957,17 @@ export namespace Prisma {
 		_max?: NestedEnumPersonRoleFilter<$PrismaModel>;
 	};
 
+	export type DateTimeNullableFilter<$PrismaModel = never> = {
+		equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null;
+		in?: Date[] | string[] | null;
+		notIn?: Date[] | string[] | null;
+		lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null;
+	};
+
 	export type IntNullableFilter<$PrismaModel = never> = {
 		equals?: number | IntFieldRefInput<$PrismaModel> | null;
 		in?: number[] | null;
@@ -11895,6 +11984,9 @@ export namespace Prisma {
 		createdAt?: SortOrder;
 		updatedAt?: SortOrder;
 		content?: SortOrder;
+		isDone?: SortOrder;
+		doneDate?: SortOrder;
+		dueDate?: SortOrder;
 		assignedToId?: SortOrder;
 		createdById?: SortOrder;
 	};
@@ -11910,6 +12002,9 @@ export namespace Prisma {
 		createdAt?: SortOrder;
 		updatedAt?: SortOrder;
 		content?: SortOrder;
+		isDone?: SortOrder;
+		doneDate?: SortOrder;
+		dueDate?: SortOrder;
 		assignedToId?: SortOrder;
 		createdById?: SortOrder;
 	};
@@ -11919,6 +12014,9 @@ export namespace Prisma {
 		createdAt?: SortOrder;
 		updatedAt?: SortOrder;
 		content?: SortOrder;
+		isDone?: SortOrder;
+		doneDate?: SortOrder;
+		dueDate?: SortOrder;
 		assignedToId?: SortOrder;
 		createdById?: SortOrder;
 	};
@@ -11927,6 +12025,20 @@ export namespace Prisma {
 		id?: SortOrder;
 		assignedToId?: SortOrder;
 		createdById?: SortOrder;
+	};
+
+	export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+		equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null;
+		in?: Date[] | string[] | null;
+		notIn?: Date[] | string[] | null;
+		lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null;
+		_count?: NestedIntNullableFilter<$PrismaModel>;
+		_min?: NestedDateTimeNullableFilter<$PrismaModel>;
+		_max?: NestedDateTimeNullableFilter<$PrismaModel>;
 	};
 
 	export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12422,6 +12534,10 @@ export namespace Prisma {
 		connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[];
 	};
 
+	export type NullableDateTimeFieldUpdateOperationsInput = {
+		set?: Date | string | null;
+	};
+
 	export type AttachmentUpdateManyWithoutThingNestedInput = {
 		create?:
 			| XOR<AttachmentCreateWithoutThingInput, AttachmentUncheckedCreateWithoutThingInput>
@@ -12687,6 +12803,31 @@ export namespace Prisma {
 		_max?: NestedEnumPersonRoleFilter<$PrismaModel>;
 	};
 
+	export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+		equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null;
+		in?: Date[] | string[] | null;
+		notIn?: Date[] | string[] | null;
+		lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null;
+	};
+
+	export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+		equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null;
+		in?: Date[] | string[] | null;
+		notIn?: Date[] | string[] | null;
+		lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
+		not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null;
+		_count?: NestedIntNullableFilter<$PrismaModel>;
+		_min?: NestedDateTimeNullableFilter<$PrismaModel>;
+		_max?: NestedDateTimeNullableFilter<$PrismaModel>;
+	};
+
 	export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
 		equals?: number | IntFieldRefInput<$PrismaModel> | null;
 		in?: number[] | null;
@@ -12750,6 +12891,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedTo?: PersonCreateNestedOneWithoutAssignedThingsInput;
 		createdBy: PersonCreateNestedOneWithoutCreatedThingsInput;
 	};
@@ -12759,6 +12903,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedToId?: number | null;
 		createdById: number;
 	};
@@ -12821,6 +12968,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedTo?: PersonUpdateOneWithoutAssignedThingsNestedInput;
 		createdBy?: PersonUpdateOneRequiredWithoutCreatedThingsNestedInput;
 	};
@@ -12830,6 +12980,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedToId?: NullableIntFieldUpdateOperationsInput | number | null;
 		createdById?: IntFieldUpdateOperationsInput | number;
 	};
@@ -13100,6 +13253,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		attachments?: AttachmentCreateNestedManyWithoutThingInput;
 		createdBy: PersonCreateNestedOneWithoutCreatedThingsInput;
 	};
@@ -13109,6 +13265,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		createdById: number;
 		attachments?: AttachmentUncheckedCreateNestedManyWithoutThingInput;
 	};
@@ -13126,6 +13285,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		attachments?: AttachmentCreateNestedManyWithoutThingInput;
 		assignedTo?: PersonCreateNestedOneWithoutAssignedThingsInput;
 	};
@@ -13135,6 +13297,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedToId?: number | null;
 		attachments?: AttachmentUncheckedCreateNestedManyWithoutThingInput;
 	};
@@ -13251,6 +13416,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFilter<"Thing"> | Date | string;
 		updatedAt?: DateTimeFilter<"Thing"> | Date | string;
 		content?: StringFilter<"Thing"> | string;
+		isDone?: BoolFilter<"Thing"> | boolean;
+		doneDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
+		dueDate?: DateTimeNullableFilter<"Thing"> | Date | string | null;
 		assignedToId?: IntNullableFilter<"Thing"> | number | null;
 		createdById?: IntFilter<"Thing"> | number;
 	};
@@ -13591,6 +13759,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		createdById: number;
 	};
 
@@ -13599,6 +13770,9 @@ export namespace Prisma {
 		createdAt?: Date | string;
 		updatedAt?: Date | string;
 		content: string;
+		isDone?: boolean;
+		doneDate?: Date | string | null;
+		dueDate?: Date | string | null;
 		assignedToId?: number | null;
 	};
 
@@ -13623,6 +13797,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		attachments?: AttachmentUpdateManyWithoutThingNestedInput;
 		createdBy?: PersonUpdateOneRequiredWithoutCreatedThingsNestedInput;
 	};
@@ -13632,6 +13809,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		createdById?: IntFieldUpdateOperationsInput | number;
 		attachments?: AttachmentUncheckedUpdateManyWithoutThingNestedInput;
 	};
@@ -13641,6 +13821,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		createdById?: IntFieldUpdateOperationsInput | number;
 	};
 
@@ -13648,6 +13831,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		attachments?: AttachmentUpdateManyWithoutThingNestedInput;
 		assignedTo?: PersonUpdateOneWithoutAssignedThingsNestedInput;
 	};
@@ -13657,6 +13843,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedToId?: NullableIntFieldUpdateOperationsInput | number | null;
 		attachments?: AttachmentUncheckedUpdateManyWithoutThingNestedInput;
 	};
@@ -13666,6 +13855,9 @@ export namespace Prisma {
 		createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
 		content?: StringFieldUpdateOperationsInput | string;
+		isDone?: BoolFieldUpdateOperationsInput | boolean;
+		doneDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+		dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 		assignedToId?: NullableIntFieldUpdateOperationsInput | number | null;
 	};
 

@@ -8,6 +8,9 @@ const makeSchema = () =>
 			createdAt: z.coerce.date().optional(),
 			updatedAt: z.coerce.date().optional(),
 			content: z.string(),
+			isDone: z.boolean().optional(),
+			doneDate: z.coerce.date().optional().nullable(),
+			dueDate: z.coerce.date().optional().nullable(),
 			createdById: z.number().int(),
 		})
 		.strict();

@@ -5,6 +5,9 @@ export const ThingSchema = z.object({
 	createdAt: z.date(),
 	updatedAt: z.date(),
 	content: z.string(),
+	isDone: z.boolean(),
+	doneDate: z.date().nullable(),
+	dueDate: z.date().nullable(),
 	assignedToId: z.number().int().nullable(),
 	createdById: z.number().int(),
 });

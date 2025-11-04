@@ -4,8 +4,10 @@ import { searchModalAtom } from "@/services/store/atoms";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useIsMounted } from "@/hooks/use-is-mounted";
 import { useTheme } from "next-themes";
+import { useTranslation } from "react-i18next";
 
 export function AppHeader() {
+	const { t } = useTranslation("common");
 	const isMounted = useIsMounted();
 	const { setTheme, resolvedTheme } = useTheme();
 	const setSearchModal = useSetAtom(searchModalAtom);
@@ -20,7 +22,9 @@ export function AppHeader() {
 
 	return (
 		<header className="border-muted flex h-10 shrink-0 items-center justify-between border-y">
-			<div className="flex items-center px-4 lg:px-12"></div>
+			<div className="flex items-center px-4 lg:px-12">
+				<h1 className="text-lg font-bold">{t("app.name")}</h1>
+			</div>
 			<div className="flex items-center px-4 lg:px-12">
 				{isMounted ? (
 					<button

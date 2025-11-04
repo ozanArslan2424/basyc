@@ -5,10 +5,11 @@ import type {
 	ThingCreateData,
 	ThingData,
 	ThingDeleteData,
+	ThingDoneData,
 	ThingUpdateData,
 } from "@/schemas/thing.schemas";
 import type { QueryService } from "@/services/query/query.service";
-import type { OnMutationSuccess } from "@/services/query/query.type";
+import type { OnMutationSuccess, QueryUpdaterArgs } from "@/services/query/query.type";
 import { QK_THING } from "@/services/thing/thing.keys";
 
 export class ThingService {
@@ -26,6 +27,22 @@ export class ThingService {
 			},
 		});
 
+	updateQueryData = (args: QueryUpdaterArgs<ThingData>) => {
+		this.queryService.queryClient.setQueryData<ThingData[]>([QK_THING.LIST], (prev) => {
+			if (!prev) return [];
+			switch (args.action) {
+				case "create":
+					return [...prev, args.data];
+				case "update":
+					return prev.map((t) => (t.id === args.data.id ? args.data : t));
+				case "delete":
+					return prev.filter((t) => t.id !== args.data);
+				default:
+					return [];
+			}
+		});
+	};
+
 	create = (onSuccess?: OnMutationSuccess<ThingCreateData, ThingData>) =>
 		this.queryService.createMutationOptions<ThingCreateData, ThingData>({
 			mutationFn: async (body) => {
@@ -33,7 +50,10 @@ export class ThingService {
 				if (res.error) throw res.error;
 				return res.data;
 			},
-			onSuccess,
+			onSuccess: (res, vars) => {
+				this.updateQueryData({ action: "create", data: res });
+				onSuccess?.(res, vars);
+			},
 		});
 
 	update = (onSuccess?: OnMutationSuccess<ThingUpdateData, ThingData>) =>
@@ -43,7 +63,10 @@ export class ThingService {
 				if (res.error) throw res.error;
 				return res.data;
 			},
-			onSuccess,
+			onSuccess: (res, vars) => {
+				this.updateQueryData({ action: "update", data: res });
+				onSuccess?.(res, vars);
+			},
 		});
 
 	delete = () =>
@@ -53,9 +76,7 @@ export class ThingService {
 				if (res.error) throw res.error;
 			},
 			onSuccess: (_, vars) => {
-				this.queryService.queryClient.setQueryData<ThingData[]>([QK_THING.LIST], (prev) =>
-					prev ? prev.filter((t) => t.id !== vars.thingId) : [],
-				);
+				this.updateQueryData({ action: "delete", data: vars.thingId });
 			},
 		});
 
@@ -67,9 +88,19 @@ export class ThingService {
 				return res.data;
 			},
 			onSuccess: (res) => {
-				this.queryService.queryClient.setQueryData<ThingData[]>([QK_THING.LIST], (prev) =>
-					prev ? prev.map((t) => (t.id === res.id ? res : t)) : [],
-				);
+				this.updateQueryData({ action: "update", data: res });
+			},
+		});
+
+	done = () =>
+		this.queryService.createMutationOptions<ThingDoneData, ThingData>({
+			mutationFn: async (body) => {
+				const res = await request.thing.done.post(body);
+				if (res.error) throw res.error;
+				return res.data;
+			},
+			onSuccess: (res) => {
+				this.updateQueryData({ action: "update", data: res });
 			},
 		});
 }

@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { PersonAvatar } from "@/components/user-avatar";
 import { cn } from "@/lib/utils";
 import type { Person } from "prisma/generated";
 import type { ComponentProps } from "react";
@@ -11,9 +12,8 @@ type PersonCardProps = ComponentProps<"div"> & {
 export function PersonCard({ person, isActive, ...rest }: PersonCardProps) {
 	return (
 		<div {...rest}>
-			<img
-				src={person.image ?? undefined}
-				alt={person.name}
+			<PersonAvatar
+				person={person}
 				className={cn(
 					"bg-background aspect-square rounded-full border shadow-xs select-none",
 					"xl:h-24 xl:w-24",
@@ -22,9 +22,8 @@ export function PersonCard({ person, isActive, ...rest }: PersonCardProps) {
 					"sm:h-24 sm:w-24",
 					"h-24 w-24",
 				)}
-				height={100}
-				width={100}
 			/>
+
 			<span
 				className={cn(
 					"bg-background absolute left-1/2 w-max -translate-x-1/2 overflow-hidden rounded-md border px-2 py-1 font-bold whitespace-nowrap shadow-sm select-none",

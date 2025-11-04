@@ -5,6 +5,9 @@ export const ThingScalarFieldEnumSchema = z.enum([
 	"createdAt",
 	"updatedAt",
 	"content",
+	"isDone",
+	"doneDate",
+	"dueDate",
 	"assignedToId",
 	"createdById",
 ]);

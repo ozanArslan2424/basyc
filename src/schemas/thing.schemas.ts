@@ -32,3 +32,10 @@ export const ThingDeleteDataSchema = z.object({
 });
 
 export type ThingDeleteData = z.infer<typeof ThingDeleteDataSchema>;
+
+export const ThingDoneDataSchema = z.object({
+	thingId: z.number(),
+	isDone: z.boolean(),
+});
+
+export type ThingDoneData = z.infer<typeof ThingDoneDataSchema>;

@@ -2,6 +2,9 @@ import * as z from "zod";
 // prettier-ignore
 export const ThingInputSchema = z.object({
     content: z.string(),
+    isDone: z.boolean(),
+    doneDate: z.date().optional().nullable(),
+    dueDate: z.date().optional().nullable(),
     attachments: z.array(z.unknown()),
     assignedToId: z.number().int().optional().nullable(),
     assignedTo: z.unknown().optional().nullable(),

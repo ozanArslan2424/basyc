@@ -4,7 +4,9 @@ import isBetween from "dayjs/plugin/isBetween";
 import relativeTime from "dayjs/plugin/relativeTime";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 
+dayjs.extend(advancedFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -16,20 +18,20 @@ type DInput = dayjs.ConfigType;
 export const timestamp = (date?: DInput) => ({
 	now: dayjs(new Date()),
 	iso: dayjs(date).toISOString(),
-	// toNow: dayjs(date).toNow(),
 	fromNow: dayjs(date).fromNow(),
 	shortDate: dayjs(date).format("DD.MM.YYYY"),
 	short: dayjs(date).format("DD MMM YYYY"),
 	long: dayjs(date).format("DD MMMM YYYY"),
-	dateTimeNumber: dayjs(date).format("DD.MM.YYYY HH.mm"),
-	dateTimeShort: dayjs(date).format("DD MMM YYYY HH.mm"),
-	dateTimeLong: dayjs(date).format("DD MMMM YYYY HH.mm"),
+	dateTimeNumber: dayjs(date).format("DD.MM.YYYY HH:mm"),
+	dateTimeShort: dayjs(date).format("DD MMM YYYY HH:mm"),
+	dateTimeLong: dayjs(date).format("DD MMMM YYYY HH:mm"),
+	ordinalDateTime: dayjs(date).format("Do [of] MMMM, [at] HH:mm"),
 	date: dayjs(date).format("YYYY-MM-DD"),
 	numberInMonth: dayjs(date).format("D"),
 	numberInWeek: dayjs(date).format("d"),
 	shortName: dayjs(date).format("ddd"),
 	name: dayjs(date).format("dddd"),
-	time: dayjs(date).format("HH.mm"),
+	time: dayjs(date).format("HH:mm"),
 	hour: dayjs(date).format("H"),
 	minute: dayjs(date).format("m"),
 	second: dayjs(date).format("s"),

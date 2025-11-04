@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PersonAvatar } from "@/components/user-avatar";
 import type { ThingData } from "@/schemas/thing.schemas";
 import type { ComponentProps } from "react";
 
@@ -12,13 +13,7 @@ export function ThingCard({ thing, ...rest }: ThingCardProps) {
 		<Card {...rest}>
 			<CardContent className="flex gap-4">
 				{thing.assignedTo ? (
-					<img
-						src={thing.assignedTo.image ?? undefined}
-						alt={thing.assignedTo.name}
-						height={40}
-						width={40}
-						className="ring-border aspect-square h-10 w-10 rounded-full ring"
-					/>
+					<PersonAvatar person={thing.assignedTo} />
 				) : (
 					<div className="ring-border flex aspect-square h-10 w-10 items-center justify-center rounded-full ring">
 						<span className="text-xl font-black">?</span>

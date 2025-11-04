@@ -45,7 +45,7 @@ export function AppFooter() {
 	}
 
 	return (
-		<footer className="border-muted fixed bottom-4 left-0 flex h-8 w-full shrink-0 items-center justify-between border-y">
+		<footer className="border-muted fixed bottom-0 left-0 flex h-8 w-full shrink-0 items-center justify-between border-y">
 			<div className="flex items-center px-4 lg:px-12">
 				<div
 					className={cn(
