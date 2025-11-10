@@ -1,52 +1,53 @@
-import { logger } from "@/lib/log.utils";
-import type { QueryService } from "../query/query.service";
-import { QK_AUTH } from "@/services/auth/auth.keys";
-import { request } from "@/lib/request";
-import type { Person } from "prisma/generated";
-import type { LoginData, RegisterData } from "@/schemas/auth.schemas";
-import type { OnMutationSuccess } from "@/services/query/query.type";
+import { HTTPError } from "@/lib/error.utils";
+import type { LoginData, RegisterData } from "@/services/auth/auth.schema";
+import type { PersonService } from "@/services/person/person.service";
+import type { PrismaClient } from "prisma/generated";
 
 export class AuthService {
-	constructor(readonly queryService: QueryService) {
-		logger("count", AuthService.name);
+	constructor(
+		private readonly prisma: PrismaClient,
+		private readonly personService: PersonService,
+	) {}
+
+	async guard(storedUserId: string) {
+		if (storedUserId.length === 0) {
+			throw new HTTPError("UNAUTHORIZED", 401);
+		}
+		const person = await this.personService.getByUserId(storedUserId);
+		if (!person) {
+			throw new HTTPError("UNAUTHORIZED", 401);
+		}
+		return { person };
 	}
 
-	queryMe = () =>
-		this.queryService.createQueryOptions<Person>({
-			queryKey: [QK_AUTH.ME],
-			queryFn: async () => {
-				const res = await request.auth.me.get();
-				if (res.error) throw res.error;
-				return res.data;
-			},
-		});
+	async login(body: LoginData) {
+		const user = await this.prisma.user.findUnique({ where: { email: body.email } });
+		if (!user) throw new HTTPError("Invalid credentials", 400);
+		const pwdMatch = await Bun.password.verify(body.password, user.password);
+		if (!pwdMatch) throw new HTTPError("Invalid credentials", 400);
+		const profile = await this.personService.getByUserId(user.id);
+		if (!profile) {
+			throw new HTTPError("UNAUTHORIZED", 401);
+		}
+		return profile;
+	}
 
-	login = (onSuccess?: OnMutationSuccess<LoginData, Person>) =>
-		this.queryService.createMutationOptions<LoginData, Person>({
-			mutationFn: async (body) => {
-				const res = await request.auth.login.post(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess,
+	async register(body: RegisterData) {
+		const password = await Bun.password.hash(body.password);
+		const exists = await this.prisma.user.findUnique({
+			where: { email: body.email },
 		});
-
-	register = (onSuccess?: OnMutationSuccess<RegisterData, Person>) =>
-		this.queryService.createMutationOptions<RegisterData, Person>({
-			mutationFn: async (body) => {
-				const res = await request.auth.register.post(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess,
+		if (exists) {
+			throw new HTTPError("This email is registered", 400);
+		}
+		const user = await this.prisma.user.create({
+			data: { name: body.name, password: password, email: body.email },
 		});
-
-	logout = (onSuccess?: OnMutationSuccess) =>
-		this.queryService.createMutationOptions({
-			mutationFn: async () => {
-				const res = await request.auth.logout.post();
-				if (res.error) throw res.error;
-			},
-			onSuccess,
+		const profile = await this.personService.create({
+			userId: user.id,
+			email: body.email,
+			name: body.name,
 		});
+		return profile;
+	}
 }

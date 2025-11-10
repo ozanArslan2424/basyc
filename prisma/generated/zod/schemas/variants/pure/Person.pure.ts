@@ -1,5 +1,5 @@
-import * as z from "zod";
-import { PersonRoleSchema } from "../../enums/PersonRole.schema";
+import * as z from 'zod';
+import { PersonRoleSchema } from '../../enums/PersonRole.schema';
 // prettier-ignore
 export const PersonModelSchema = z.object({
     id: z.number().int(),
@@ -9,6 +9,7 @@ export const PersonModelSchema = z.object({
     email: z.string(),
     image: z.string().nullable(),
     role: PersonRoleSchema,
+    memberships: z.array(z.unknown()),
     assignedThings: z.array(z.unknown()),
     createdThings: z.array(z.unknown()),
     createdComments: z.array(z.unknown()),

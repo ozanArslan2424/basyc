@@ -8,6 +8,7 @@ model Person {
     image String?
     role  PersonRole @default(user)
 
+    memberships        Membership[] @relation("person_membership")
     assignedThings     Thing[]      @relation("thing_assigned_to")
     createdThings      Thing[]      @relation("thing_created_by")
     createdComments    Comment[]    @relation("comment_created_by")

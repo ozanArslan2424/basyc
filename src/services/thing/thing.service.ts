@@ -1,106 +1,55 @@
-import { logger } from "@/lib/log.utils";
-import { request } from "@/lib/request";
 import type {
 	ThingAssignData,
 	ThingCreateData,
-	ThingData,
 	ThingDeleteData,
 	ThingDoneData,
 	ThingUpdateData,
 } from "@/schemas/thing.schemas";
-import type { QueryService } from "@/services/query/query.service";
-import type { OnMutationSuccess, QueryUpdaterArgs } from "@/services/query/query.type";
-import { QK_THING } from "@/services/thing/thing.keys";
+import type { Person, PrismaClient } from "prisma/generated";
 
 export class ThingService {
-	constructor(readonly queryService: QueryService) {
-		logger("count", ThingService.name);
+	constructor(private readonly prisma: PrismaClient) {}
+
+	async create(person: Person, body: ThingCreateData) {
+		return await this.prisma.thing.create({
+			data: { createdById: person.id, content: body.content },
+			include: { assignedTo: true },
+		});
 	}
 
-	queryList = () =>
-		this.queryService.createQueryOptions<ThingData[]>({
-			queryKey: [QK_THING.LIST],
-			queryFn: async () => {
-				const res = await request.thing.get();
-				if (res.error) throw res.error;
-				return res.data;
-			},
+	async update(body: ThingUpdateData) {
+		return await this.prisma.thing.update({
+			where: { id: body.thingId },
+			data: { content: body.content },
+			include: { assignedTo: true },
 		});
+	}
 
-	updateQueryData = (args: QueryUpdaterArgs<ThingData>) => {
-		this.queryService.queryClient.setQueryData<ThingData[]>([QK_THING.LIST], (prev) => {
-			if (!prev) return [];
-			switch (args.action) {
-				case "create":
-					return [...prev, args.data];
-				case "update":
-					return prev.map((t) => (t.id === args.data.id ? args.data : t));
-				case "delete":
-					return prev.filter((t) => t.id !== args.data);
-				default:
-					return [];
-			}
+	async list() {
+		return await this.prisma.thing.findMany({
+			include: { assignedTo: true },
 		});
-	};
+	}
 
-	create = (onSuccess?: OnMutationSuccess<ThingCreateData, ThingData>) =>
-		this.queryService.createMutationOptions<ThingCreateData, ThingData>({
-			mutationFn: async (body) => {
-				const res = await request.thing.post(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess: (res, vars) => {
-				this.updateQueryData({ action: "create", data: res });
-				onSuccess?.(res, vars);
-			},
+	async assign(body: ThingAssignData) {
+		return await this.prisma.thing.update({
+			where: { id: body.thingId },
+			data: { assignedToId: body.personId },
+			include: { assignedTo: true },
 		});
+	}
 
-	update = (onSuccess?: OnMutationSuccess<ThingUpdateData, ThingData>) =>
-		this.queryService.createMutationOptions<ThingUpdateData, ThingData>({
-			mutationFn: async (body) => {
-				const res = await request.thing.put(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess: (res, vars) => {
-				this.updateQueryData({ action: "update", data: res });
-				onSuccess?.(res, vars);
-			},
+	async done(body: ThingDoneData) {
+		return await this.prisma.thing.update({
+			where: { id: body.thingId },
+			data: { isDone: body.isDone, doneDate: body.isDone ? new Date() : null },
+			include: { assignedTo: true },
 		});
+	}
 
-	delete = () =>
-		this.queryService.createMutationOptions<ThingDeleteData, void>({
-			mutationFn: async (body) => {
-				const res = await request.thing.delete(body);
-				if (res.error) throw res.error;
-			},
-			onSuccess: (_, vars) => {
-				this.updateQueryData({ action: "delete", data: vars.thingId });
-			},
+	async delete(body: ThingDeleteData) {
+		return await this.prisma.thing.delete({
+			where: { id: body.thingId },
 		});
-
-	assign = () =>
-		this.queryService.createMutationOptions<ThingAssignData, ThingData>({
-			mutationFn: async (body) => {
-				const res = await request.thing.assign.post(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess: (res) => {
-				this.updateQueryData({ action: "update", data: res });
-			},
-		});
-
-	done = () =>
-		this.queryService.createMutationOptions<ThingDoneData, ThingData>({
-			mutationFn: async (body) => {
-				const res = await request.thing.done.post(body);
-				if (res.error) throw res.error;
-				return res.data;
-			},
-			onSuccess: (res) => {
-				this.updateQueryData({ action: "update", data: res });
-			},
-		});
+	}
 }

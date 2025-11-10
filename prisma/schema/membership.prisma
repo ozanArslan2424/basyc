@@ -1,0 +1,10 @@
+model Membership {
+    personId Int
+    person   Person     @relation("person_membership", fields: [personId], references: [id])
+    groupId  Int
+    group    Group      @relation("group_membership", fields: [groupId], references: [id])
+    role     PersonRole
+
+    @@unique([personId, groupId, role])
+    @@map("membership")
+}

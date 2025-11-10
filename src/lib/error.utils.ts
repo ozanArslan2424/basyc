@@ -1,6 +1,23 @@
-import { toast } from "sonner";
+import { isObjectWith } from "@/lib/utils";
 import type { TMaybe } from "./helper.type";
-import { isObjectWith } from "./utils";
+import { Prisma } from "prisma/generated";
+
+export function getErrorMessage(err: unknown) {
+	if (typeof err === "string") {
+		return err;
+	} else if (isObjectWith<{ message: string }>(err, "message")) {
+		return err.message;
+	} else {
+		return "Unknown error";
+	}
+}
+
+export function assert<T>(condition: TMaybe<T>, message?: string): asserts condition {
+	const conditionName = String(condition);
+	if (!condition) {
+		throw new Error(message ? `${conditionName}: ${message}` : `Assertion failed for ${conditionName}`);
+	}
+}
 
 export class HTTPError extends Error {
 	constructor(message: string, status: number) {
@@ -18,63 +35,61 @@ export class HTTPError extends Error {
 	}
 }
 
-export function handleQueryRetry(failureCount: number, error: unknown) {
-	// Log the error to the server
-	// api.log.logError(error);
+function result(status: number, response: Response) {
+	return { status, response };
+}
 
+export function getErrorResult(error: unknown) {
 	if (error instanceof HTTPError) {
-		const isUnderRetryLimit = failureCount < 3;
-		const isTimeout = [408, 504, 409].includes(error.status);
-		if (isUnderRetryLimit && isTimeout) {
-			return true;
+		return result(error.status, new Response(error.message));
+	}
+
+	if (error instanceof Prisma.PrismaClientKnownRequestError) {
+		switch (error.code) {
+			case "P2002":
+				return result(409, new Response("Unique constraint violation"));
+			case "P2025":
+				return result(404, new Response("Record not found"));
+			case "P2003":
+				return result(400, new Response("Foreign key constraint failed"));
+			case "P2014":
+				return result(400, new Response("Invalid ID provided"));
+			case "P2000":
+				return result(400, new Response("Input value too long"));
+			case "P2001":
+				return result(404, new Response("Record not found"));
+			case "P2004":
+				return result(400, new Response("Constraint violation"));
+			case "P2005":
+				return result(400, new Response("Invalid value stored in database"));
+			case "P2006":
+				return result(400, new Response("Invalid value provided"));
+			case "P2007":
+				return result(400, new Response("Data validation error"));
+			default:
+				return result(400, new Response(`Database error: ${error.code}`));
 		}
-		const isBadRequest = [400, 401, 403, 404, 422].includes(error.status);
-		if (isBadRequest) {
-			return false;
-		}
-		return true;
 	}
 
-	return false;
-}
-
-export function handleMutationSettle(res: unknown, error: Error | null) {
-	if (isObjectWith<{ message: string }>(res, "message") && typeof res.message === "string") {
-		toast.success(res.message);
-	} else if (error) {
-		if (process.env.NODE_ENV !== "production") {
-			console.log(error);
-		}
-		toast.error(error.message);
+	if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+		return result(500, new Response("Unknown database error occurred"));
 	}
-}
 
-export function getErrorMessage(err: unknown) {
-	let message: string;
-
-	switch (true) {
-		case err instanceof Error:
-			message = err.message;
-			break;
-		case err instanceof HTTPError:
-			message = err.message;
-			break;
-		case err && typeof err === "object" && "message" in err:
-			message = String(err.message);
-			break;
-		case typeof err === "string":
-			message = err;
-			break;
-		case true:
-		default:
-			message = "Something went wrong";
+	if (error instanceof Prisma.PrismaClientInitializationError) {
+		return result(500, new Response("Database connection failed"));
 	}
-	return message;
-}
 
-export function assert<T>(condition: TMaybe<T>, message?: string): asserts condition {
-	const conditionName = String(condition);
-	if (!condition) {
-		throw new Error(message ? `${conditionName}: ${message}` : `Assertion failed for ${conditionName}`);
+	if (error instanceof Prisma.PrismaClientValidationError) {
+		return result(400, new Response("Invalid query parameters"));
 	}
+
+	if (error instanceof Prisma.PrismaClientRustPanicError) {
+		return result(500, new Response("Database system error"));
+	}
+
+	if (error instanceof Error) {
+		return result(500, new Response(error.message));
+	}
+
+	return result(500, new Response("Unknown error"));
 }

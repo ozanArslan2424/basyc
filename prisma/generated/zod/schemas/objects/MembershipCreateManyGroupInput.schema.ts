@@ -1,0 +1,10 @@
+import * as z from 'zod';
+import type { Prisma } from '../../..';
+import { PersonRoleSchema } from '../enums/PersonRole.schema'
+
+const makeSchema = () => z.object({
+  personId: z.number().int(),
+  role: PersonRoleSchema
+}).strict();
+export const MembershipCreateManyGroupInputObjectSchema: z.ZodType<Prisma.MembershipCreateManyGroupInput> = makeSchema() as unknown as z.ZodType<Prisma.MembershipCreateManyGroupInput>;
+export const MembershipCreateManyGroupInputObjectZodSchema = makeSchema();

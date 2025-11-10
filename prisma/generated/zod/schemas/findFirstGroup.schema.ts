@@ -1,0 +1,33 @@
+import type { Prisma } from '../..';
+import * as z from 'zod';
+import { GroupOrderByWithRelationInputObjectSchema as GroupOrderByWithRelationInputObjectSchema } from './objects/GroupOrderByWithRelationInput.schema';
+import { GroupWhereInputObjectSchema as GroupWhereInputObjectSchema } from './objects/GroupWhereInput.schema';
+import { GroupWhereUniqueInputObjectSchema as GroupWhereUniqueInputObjectSchema } from './objects/GroupWhereUniqueInput.schema';
+import { GroupScalarFieldEnumSchema } from './enums/GroupScalarFieldEnum.schema';
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const GroupFindFirstSelectSchema: z.ZodType<Prisma.GroupSelect> = z.object({
+    id: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    title: z.boolean().optional(),
+    password: z.boolean().optional(),
+    memberships: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.GroupSelect>;
+
+export const GroupFindFirstSelectZodSchema = z.object({
+    id: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    title: z.boolean().optional(),
+    password: z.boolean().optional(),
+    memberships: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const GroupFindFirstSchema: z.ZodType<Prisma.GroupFindFirstArgs> = z.object({ select: GroupFindFirstSelectSchema.optional(),  orderBy: z.union([GroupOrderByWithRelationInputObjectSchema, GroupOrderByWithRelationInputObjectSchema.array()]).optional(), where: GroupWhereInputObjectSchema.optional(), cursor: GroupWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([GroupScalarFieldEnumSchema, GroupScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.GroupFindFirstArgs>;
+
+export const GroupFindFirstZodSchema = z.object({ select: GroupFindFirstSelectSchema.optional(),  orderBy: z.union([GroupOrderByWithRelationInputObjectSchema, GroupOrderByWithRelationInputObjectSchema.array()]).optional(), where: GroupWhereInputObjectSchema.optional(), cursor: GroupWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([GroupScalarFieldEnumSchema, GroupScalarFieldEnumSchema.array()]).optional() }).strict();

@@ -14,5 +14,7 @@ declare module "bun" {
 		BUN_PUBLIC_API_URL: string;
 		BUN_PUBLIC_BASE_URL: string;
 		DATABASE_URL: string;
+		CLIENT_URL: string;
+		BASE_URL: string;
 	}
 }
