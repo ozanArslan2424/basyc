@@ -1,10 +1,10 @@
 import type {
-	ThingAssignData,
 	ThingCreateData,
-	ThingDeleteData,
-	ThingDoneData,
 	ThingUpdateData,
-} from "@/schemas/thing.schemas";
+	ThingAssignData,
+	ThingDoneData,
+	ThingDeleteData,
+} from "@/modules/thing/thing.schema";
 import type { Person, PrismaClient } from "prisma/generated";
 
 export class ThingService {
@@ -12,7 +12,7 @@ export class ThingService {
 
 	async create(person: Person, body: ThingCreateData) {
 		return await this.prisma.thing.create({
-			data: { createdById: person.id, content: body.content },
+			data: { createdById: person.id, content: body.content, dueDate: body.dueDate },
 			include: { assignedTo: true },
 		});
 	}
@@ -20,7 +20,7 @@ export class ThingService {
 	async update(body: ThingUpdateData) {
 		return await this.prisma.thing.update({
 			where: { id: body.thingId },
-			data: { content: body.content },
+			data: { content: body.content, dueDate: body.dueDate },
 			include: { assignedTo: true },
 		});
 	}

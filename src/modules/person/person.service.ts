@@ -1,4 +1,4 @@
-import type { PersonCreateData } from "@/services/person/person.schema";
+import type { PersonCreateData } from "@/modules/person/person.schema";
 import type { PrismaClient } from "prisma/generated";
 
 export class PersonService {

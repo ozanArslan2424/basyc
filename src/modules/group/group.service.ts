@@ -1,5 +1,5 @@
 import { HTTPError } from "@/lib/error.utils";
-import type { GroupCreateData, GroupJoinData } from "@/services/group/group.schema";
+import type { GroupCreateData, GroupJoinData } from "@/modules/group/group.schema";
 import { PersonRole, type PrismaClient } from "prisma/generated";
 
 export class GroupService {

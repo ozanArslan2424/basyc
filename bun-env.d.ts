@@ -16,5 +16,7 @@ declare module "bun" {
 		DATABASE_URL: string;
 		CLIENT_URL: string;
 		BASE_URL: string;
+		JWT_REFRESH_SECRET: string;
+		JWT_ACCESS_SECRET: string;
 	}
 }
