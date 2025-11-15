@@ -5,7 +5,7 @@ import {
 	ThingUpdateDataSchema,
 	ThingAssignDataSchema,
 	ThingDoneDataSchema,
-	ThingDeleteDataSchema,
+	ThingRemoveDataSchema,
 } from "@/modules/thing/thing.schema";
 import Elysia from "elysia";
 
@@ -33,6 +33,6 @@ export const ThingController = new Elysia({ prefix: "/thing" })
 		body: ThingDoneDataSchema,
 		response: ThingDataSchema,
 	})
-	.post("/delete", (c) => c.thingService.delete(c.body), {
-		body: ThingDeleteDataSchema,
+	.post("/remove", (c) => c.thingService.remove(c.body), {
+		body: ThingRemoveDataSchema,
 	});

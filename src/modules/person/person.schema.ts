@@ -16,3 +16,9 @@ export const PersonCreateSchema = z.object({
 });
 
 export type PersonCreateData = z.infer<typeof PersonCreateSchema>;
+
+export const PersonRemoveSchema = z.object({
+	personId: z.number(),
+});
+
+export type PersonRemoveData = z.infer<typeof PersonRemoveSchema>;

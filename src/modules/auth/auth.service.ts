@@ -1,5 +1,6 @@
-import { HTTPError } from "@/lib/error.utils";
+import { HTTPError } from "@/modules/error/http-error.class";
 import type { TMaybe } from "@/lib/helper.type";
+import { Service } from "@/lib/service.class";
 import type { LoginData, RegisterData } from "@/modules/auth/auth.schema";
 import type { ConfigService } from "@/modules/config/config.service";
 import type { PersonService } from "@/modules/person/person.service";
@@ -7,12 +8,14 @@ import type { JWTPayloadSpec } from "@elysiajs/jwt";
 import type { Cookie, ElysiaCookie } from "elysia/cookies";
 import type { PrismaClient } from "prisma/generated";
 
-export class AuthService {
+export class AuthService extends Service {
 	constructor(
 		private readonly prisma: PrismaClient,
 		private readonly personService: PersonService,
 		private readonly config: ConfigService,
-	) {}
+	) {
+		super(AuthService.name);
+	}
 
 	getAccessToken(headers: Record<string, string | undefined>): string {
 		const authHeader = headers["Authorization"] || headers["authorization"];
@@ -40,6 +43,8 @@ export class AuthService {
 			domain: this.config.clientUrl,
 			httpOnly: true,
 			maxAge: 7 * 24 * 60 * 60,
+			sameSite: "none",
+			secure: true,
 		};
 	}
 

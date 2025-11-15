@@ -28,11 +28,11 @@ export const ThingAssignDataSchema = z.object({
 
 export type ThingAssignData = z.infer<typeof ThingAssignDataSchema>;
 
-export const ThingDeleteDataSchema = z.object({
+export const ThingRemoveDataSchema = z.object({
 	thingId: z.number(),
 });
 
-export type ThingDeleteData = z.infer<typeof ThingDeleteDataSchema>;
+export type ThingRemoveData = z.infer<typeof ThingRemoveDataSchema>;
 
 export const ThingDoneDataSchema = z.object({
 	thingId: z.number(),

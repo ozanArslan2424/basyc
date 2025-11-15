@@ -1,12 +1,12 @@
 {
-	"name": "basyc",
+	"name": "slver",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
 		"dev": "bun --hot index.ts",
 		"build": "bun build --compile --target bun --outfile server index.ts",
-		"fm": "prettier --write .",
+		"fm": "bunx --bun prettier --write .",
 		"lint": "bunx oxlint --type-aware",
 		"db:mig": "bunx --bun prisma migrate dev --create-only",
 		"db:push": "bunx --bun prisma migrate deploy",
@@ -22,6 +22,7 @@
 		"@elysiajs/openapi": "^1.4.11",
 		"@elysiajs/static": "^1.4.6",
 		"elysia": "^1.4.15",
+		"winston": "^3.18.3",
 		"zod": "^4.1.12"
 	},
 	"devDependencies": {

@@ -1,14 +1,17 @@
+import { Service } from "@/lib/service.class";
 import type {
 	ThingCreateData,
 	ThingUpdateData,
 	ThingAssignData,
 	ThingDoneData,
-	ThingDeleteData,
+	ThingRemoveData,
 } from "@/modules/thing/thing.schema";
 import type { Person, PrismaClient } from "prisma/generated";
 
-export class ThingService {
-	constructor(private readonly prisma: PrismaClient) {}
+export class ThingService extends Service {
+	constructor(private readonly prisma: PrismaClient) {
+		super(ThingService.name);
+	}
 
 	async create(person: Person, body: ThingCreateData) {
 		return await this.prisma.thing.create({
@@ -47,7 +50,7 @@ export class ThingService {
 		});
 	}
 
-	async delete(body: ThingDeleteData) {
+	async remove(body: ThingRemoveData) {
 		return await this.prisma.thing.delete({
 			where: { id: body.thingId },
 		});

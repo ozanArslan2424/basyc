@@ -2,15 +2,31 @@ import { AuthJWTSchema, type AuthJWTData } from "@/modules/auth/auth.schema";
 import type { JWTOption } from "@elysiajs/jwt";
 import type { ElysiaOpenAPIConfig } from "@elysiajs/openapi";
 import * as z from "zod/v4";
+import pkg from "../../../package.json";
+import { Service } from "@/lib/service.class";
 
-export class ConfigService {
+export class ConfigService extends Service {
+	constructor() {
+		super(ConfigService.name);
+	}
+
 	port = process.env.PORT;
+	nodeEnv = process.env.NODE_ENV;
 	isDev = process.env.NODE_ENV !== "production";
 	databaseUrl = process.env.DATABASE_URL;
 	clientUrl = process.env.CLIENT_URL;
 	baseUrl = process.env.BASE_URL;
 	jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
 	jwtAccessSecret = process.env.JWT_ACCESS_SECRET;
+	logLevel = process.env.LOG_LEVEL;
+
+	getLogLevel(): string {
+		return this.logLevel || "info";
+	}
+
+	getServiceName(): string {
+		return pkg.name;
+	}
 
 	getCorsOrigin() {
 		const origins = [this.clientUrl];
@@ -25,7 +41,7 @@ export class ConfigService {
 		return {
 			origin: this.getCorsOrigin(),
 			methods: ["GET", "POST"],
-			allowedHeaders: ["Content-Type", "Authorization", "content-type", "authorization"],
+			allowedHeaders: ["Content-Type", "Authorization", "content-type", "authorization", "x-group-id"],
 			credentials: true,
 		};
 	}
@@ -59,8 +75,24 @@ export class ConfigService {
 		return {
 			path: "/reference",
 			provider: "scalar",
+			documentation: {
+				openapi: "3.1.0",
+				info: {
+					title: pkg.name,
+					version: pkg.version,
+				},
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: "http",
+							scheme: "bearer",
+							bearerFormat: "JWT",
+						},
+					},
+				},
+			},
 			scalar: {
-				title: "basyc api",
+				title: pkg.name,
 				theme: "elysiajs",
 				layout: "classic",
 				defaultHttpClient: {
