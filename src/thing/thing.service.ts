@@ -62,6 +62,7 @@ export class ThingService extends Core.Service {
 			where,
 			include: { assignedTo: true },
 			distinct: ["id"],
+			orderBy: [{ doneDate: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
 		});
 	}
 
